@@ -2444,13 +2444,12 @@ async function specConfirmActivate() {
         return;
       }
       if (missionPollInterval) { clearInterval(missionPollInterval); missionPollInterval = null; }
-      [missionCase, specCurrentCase, activeCase].forEach(c => {
-        if (c && c.CaseID === theCase.CaseID) {
-          c.ecprActivated = true; c.ecprTime = now;
-          c.ecprBy = CU.displayname; c.ecprByRole = ROLES[CU.role]?.label||CU.role;
-          c.status = 'activated'; c[''] = 'activated';
-        }
-      });
+      // 直接更新全域變數（用 theCase 為主）
+      const _upd = { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status: 'activated' };
+      Object.assign(theCase, _upd);
+      if (missionCase) Object.assign(missionCase, _upd);
+      if (specCurrentCase) Object.assign(specCurrentCase, _upd);
+      if (activeCase) Object.assign(activeCase, _upd);
       const msKey = 'ecpr_ms_' + theCase.CaseID;
       let ms = JSON.parse(localStorage.getItem(msKey)||'{}');
       ms.ecpr = now;
