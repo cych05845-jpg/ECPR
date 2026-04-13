@@ -2184,15 +2184,22 @@ function renderMissionNurseState(c) {
   const msKey = 'ecpr_ms_' + c.CaseID;
   const ms = JSON.parse(localStorage.getItem(msKey)||'{}');
   ['team','cannula','xray','icu'].forEach(task => {
-    const el = document.querySelector(`[data-task="${task}"]`);
+    const el = document.querySelector('[data-task="' + task + '"]');
     if (!el) return;
-    if (ms[task]) {
+    const t = ms[task] || c['ms_'+task];
+    const by = c['ms_'+task+'_by'] || '';
+    if (t) {
       el.classList.add('done');
       el.querySelector('.mt-status').textContent = '✅ 完成';
-      el.querySelector('.mt-time').textContent = new Date(ms[task]).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+      const timeStr = new Date(t).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+      el.querySelector('.mt-time').textContent = timeStr + (by ? '  ' + by : '');
     }
   });
   updateNurseTaskProg();
+  // 案件已完成 → 顯示下載按鈕
+  if (['closed','icuTransfer'].includes(caseStatus(c))) {
+    showNurseRecordButtons(c.CaseID);
+  }
 }
 
 function toggleMissionTask(el) {
@@ -2213,7 +2220,16 @@ function toggleMissionTask(el) {
 
     // 勾選 ICU → 產生完整 ECPR 紀錄
     if (task === 'icu') {
-      setTimeout(() => generateECPRRecord(missionCase, ms), 500);
+      // 合併 localStorage 和 Sheets 的里程碑資料
+      setTimeout(() => {
+        const mergedMs = {
+          team:    ms.team    || missionCase.ms_team    || null,
+          cannula: ms.cannula || missionCase.ms_cannula || null,
+          xray:    ms.xray    || missionCase.ms_xray    || null,
+          icu:     ms.icu     || missionCase.ms_icu     || null,
+        };
+        generateECPRRecord(missionCase, mergedMs);
+      }, 500);
     }
   } else {
     delete ms[task];
