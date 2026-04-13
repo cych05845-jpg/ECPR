@@ -211,8 +211,8 @@
   .bot-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(10,12,16,.97); backdrop-filter:blur(16px); border-top:1px solid var(--border); display:flex; padding:6px 0 env(safe-area-inset-bottom,6px); z-index:100; }
   .ni { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 8px; cursor:pointer; border:none; background:transparent; font-family:inherit; color:var(--text3); transition:all .2s; }
   .ni.on { color:var(--red-light); }
-  .ni .ni-ico { font-size:1.2rem; }
-  .ni .ni-lbl { font-size:.6rem; font-weight:600; letter-spacing:.04em; }
+  .ni .ni-ico { font-size:1.5rem; }
+  .ni .ni-lbl { font-size:.72rem; font-weight:700; letter-spacing:.02em; }
 
   /* CVS BANNER */
   .cvs-banner { display:none; align-items:center; gap:10px; padding:11px 14px; background:rgba(217,43,43,.1); border:1px solid rgba(217,43,43,.35); border-radius:var(--radius-sm); margin-bottom:12px; }
@@ -259,6 +259,218 @@
   .sp-name { font-size:.85rem; font-weight:600; flex:1; }
   .sp-role { font-size:.7rem; color:var(--text3); }
   .sp-divider { border:none; border-top:1px solid var(--border); margin:6px 0; }
+
+  /* ── EMT QUIZ ── */
+  .emt-step { }
+  .emt-choice {
+    display:flex; align-items:center; gap:12px;
+    width:100%; padding:14px 16px;
+    background:var(--bg4); border:2px solid var(--border);
+    border-radius:var(--radius-sm); cursor:pointer;
+    font-family:inherit; text-align:left;
+    transition:all .2s; color:var(--text);
+  }
+  .emt-choice:hover { border-color:var(--border2); background:var(--bg3); transform:translateY(-1px); }
+  .emt-choice.selected { background:rgba(26,107,181,.1); border-color:var(--blue-light); }
+  .ec-ico { font-size:1.6rem; flex-shrink:0; width:36px; text-align:center; }
+  .ec-main { flex:1; }
+  .ec-title { font-size:.95rem; font-weight:700; margin-bottom:2px; }
+  .ec-hint { font-size:.75rem; color:var(--text3); line-height:1.4; }
+  .ec-tag { font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:10px; flex-shrink:0; white-space:nowrap; }
+  .ec-yes { background:rgba(26,158,92,.15); color:var(--green-light); }
+  .ec-no { background:rgba(217,43,43,.15); color:#FF8080; }
+  .ec-border { background:rgba(245,166,35,.15); color:#FFD060; }
+
+  .emt-excl {
+    display:flex; align-items:center; gap:12px;
+    width:100%; padding:14px 16px;
+    background:var(--bg4); border:2px solid var(--border);
+    border-radius:var(--radius-sm); cursor:pointer;
+    font-family:inherit; text-align:left;
+    transition:all .2s; color:var(--text);
+  }
+  .emt-excl:hover { border-color:rgba(217,43,43,.4); }
+  .emt-excl.selected { background:rgba(217,43,43,.1); border-color:rgba(217,43,43,.5); }
+  .excl-check { font-size:1.3rem; flex-shrink:0; transition:all .2s; }
+  .emt-excl.selected .excl-check { color:var(--red-light); }
+
+  .conclusion-box {
+    padding:14px 16px; border-radius:var(--radius-sm);
+    font-size:.9rem; line-height:1.6;
+  }
+  .concl-go { background:rgba(26,158,92,.1); border:2px solid rgba(26,158,92,.4); }
+  .concl-no { background:rgba(217,43,43,.1); border:2px solid rgba(217,43,43,.4); }
+  .concl-border { background:rgba(245,166,35,.1); border:2px solid rgba(245,166,35,.4); }
+  .concl-title { font-size:1.1rem; font-weight:800; margin-bottom:6px; }
+  .concl-items { font-size:.8rem; color:var(--text2); margin-top:8px; }
+  .concl-item { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
+
+
+  /* ── EMT BIG BUTTONS ── */
+  /* EMT BIG BUTTONS */
+  .emt-section { margin-bottom:4px; }
+  .emt-sec-title { font-size:.92rem;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:.05em;margin-bottom:10px; }
+  .emt-sec-title.excl-title { color:#FF8080;background:rgba(217,43,43,.12);padding:7px 12px;border-radius:8px;border-left:3px solid var(--red); }
+  .emt-big-btn-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+  .emt-big-btn {
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;padding:20px 12px;
+    background:rgba(26,158,92,.08);border:2px solid rgba(26,158,92,.3);
+    border-radius:var(--radius);cursor:pointer;
+    font-family:inherit;color:var(--text);
+    transition:all .2s;min-height:100px;
+  }
+  .emt-big-btn:hover { transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.5); }
+  .emt-big-btn.selected { background:rgba(26,158,92,.2);border-color:var(--green);box-shadow:0 0 0 3px rgba(26,158,92,.25); }
+  .emt-big-btn-no { background:rgba(217,43,43,.08);border-color:rgba(217,43,43,.3); }
+  .emt-big-btn-no.selected { background:rgba(217,43,43,.2);border-color:var(--red);box-shadow:0 0 0 3px rgba(217,43,43,.25); }
+  .emt-big-btn-border { background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3); }
+  .emt-big-btn-border.selected { background:rgba(245,166,35,.15);border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,166,35,.25); }
+  .emt-big-btn-wide { flex-direction:row;min-height:72px;padding:16px;gap:14px;text-align:left; }
+  .ebb-ico { font-size:2.2rem;flex-shrink:0; }
+  .ebb-lbl { font-size:1.05rem;font-weight:800;display:block; }
+  .ebb-hint { font-size:.8rem;color:var(--text3);display:block;margin-top:3px; }
+  .emt-big-btn-wide .ebb-ico { font-size:1.6rem; }
+  .emt-excl {
+    display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;
+    background:rgba(217,43,43,.06);border:2px solid rgba(217,43,43,.2);border-radius:var(--radius-sm);
+    cursor:pointer;font-family:inherit;text-align:left;transition:all .2s;color:var(--text);
+  }
+  .emt-excl:hover { border-color:rgba(217,43,43,.5);background:rgba(217,43,43,.1); }
+  .emt-excl.selected { background:rgba(217,43,43,.15);border-color:rgba(217,43,43,.6); }
+  .excl-check { font-size:1.5rem;flex-shrink:0;color:rgba(217,43,43,.4); }
+  .emt-excl.selected .excl-check { color:var(--red-light); }
+  .emt-excl .ec-title { font-size:1rem;font-weight:700; }
+  .emt-excl .ec-hint { font-size:.78rem;color:var(--text3); }
+  .live-result { padding:14px 16px;border-radius:var(--radius-sm);font-size:.95rem;line-height:1.6;font-weight:600; }
+  .lr-go { background:rgba(26,158,92,.12);border:2px solid rgba(26,158,92,.45);color:var(--green-light); }
+  .lr-no { background:rgba(217,43,43,.12);border:2px solid rgba(217,43,43,.45);color:#FF8080; }
+  .lr-border { background:rgba(245,166,35,.12);border:2px solid rgba(245,166,35,.45);color:#FFD060; }
+
+  /* BOTTOM NAV */
+  .ni .ni-ico { font-size:1.5rem; }
+  .ni .ni-lbl { font-size:.72rem; font-weight:700; letter-spacing:.02em; }
+
+  /* CASE CARD ACTIVE */
+  .cc.active-case { border-color:var(--red);background:rgba(217,43,43,.08); }
+  .cc.active-case .cc-name { color:#FF8080;font-size:1rem; }
+  .cc.active-case .cc-id { color:var(--yellow);font-size:.9rem; }
+  .cc.active-case .cc-sub { color:var(--text2);font-size:.82rem; }
+
+  /* NOTIFY ITEMS */
+  .notify-item.emt-type { border-left:4px solid var(--orange); }
+  .notify-item.activate-type { border-left:4px solid var(--red); }
+
+  /* SPECIALIST ACTIVATION */
+  .act-btn-confirm { background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;font-size:1.1rem;font-weight:900;padding:18px;border-radius:var(--radius);border:none;width:100%;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(217,43,43,.4);transition:all .2s;letter-spacing:.05em; }
+  .act-btn-confirm:hover { filter:brightness(1.1);box-shadow:0 6px 28px rgba(217,43,43,.6);transform:translateY(-1px); }
+  .act-btn-confirm:disabled { opacity:.4;cursor:not-allowed;transform:none; }
+  .act-btn-cancel { background:linear-gradient(135deg,var(--green),#0d7d48);color:#fff;font-size:1.1rem;font-weight:900;padding:18px;border-radius:var(--radius);border:none;width:100%;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(26,158,92,.4);transition:all .2s;letter-spacing:.05em; }
+  .act-btn-cancel:hover { filter:brightness(1.1);transform:translateY(-1px); }
+
+  /* SDM ZONE TABLE */
+  .sdm-zone-row { display:grid;grid-template-columns:auto 1fr 1fr auto;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:6px;transition:all .3s; }
+  .sdm-zone-row.highlight { transform:scale(1.02);box-shadow:0 2px 12px rgba(0,0,0,.3); }
+
+  /* ── MILESTONE TIMELINE ── */
+  .timeline { display:flex;flex-direction:column;gap:0;position:relative; }
+  .tl-item { display:flex;gap:14px;position:relative; }
+  .tl-left { display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0; }
+  .tl-dot {
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.9rem;flex-shrink:0;z-index:1;
+    border:2px solid var(--border2);background:var(--bg4);
+    transition:all .3s;
+  }
+  .tl-dot.done { background:var(--green);border-color:var(--green);color:#fff; }
+  .tl-dot.active { background:var(--red);border-color:var(--red);color:#fff;animation:pulse 1.5s infinite; }
+  .tl-dot.auto { background:var(--blue);border-color:var(--blue);color:#fff; }
+  .tl-line { width:2px;background:var(--border);flex:1;min-height:16px; }
+  .tl-line.done { background:var(--green); }
+  .tl-item:last-child .tl-line { display:none; }
+  .tl-body { flex:1;padding-bottom:18px; }
+  .tl-title { font-size:.92rem;font-weight:700;margin-bottom:2px; }
+  .tl-time { font-size:.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace; }
+  .tl-action {
+    display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+    padding:7px 14px;border-radius:var(--radius-sm);
+    font-size:.82rem;font-weight:700;font-family:inherit;
+    cursor:pointer;border:none;background:var(--bg4);
+    border:1px solid var(--border2);color:var(--text2);
+    transition:all .2s;
+  }
+  .tl-action:hover { background:var(--bg3);color:var(--text);border-color:var(--green); }
+  .tl-action.done-btn { background:rgba(26,158,92,.1);border-color:rgba(26,158,92,.3);color:var(--green-light); }
+
+  /* ── NOTIFY LOG ── */
+  .notify-item { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:9px; }
+  .notify-item .ni-head { display:flex;align-items:center;gap:8px;margin-bottom:8px; }
+  .notify-item .ni-tag { font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:8px; }
+  .notify-item .ni-time { font-size:.72rem;color:var(--text3);margin-left:auto; }
+  .notify-item .ni-body { font-size:.82rem;line-height:1.7;color:var(--text2);white-space:pre-wrap;font-family:'JetBrains Mono',monospace;background:var(--bg4);padding:10px;border-radius:6px; }
+
+
+  /* ── MISSION TASK ── */
+  .mission-task {
+    display:flex;align-items:center;gap:12px;
+    padding:14px 16px;
+    background:var(--bg4);border:2px solid var(--border);
+    border-radius:var(--radius-sm);cursor:pointer;
+    transition:all .25s;user-select:none;
+  }
+  .mission-task:hover { border-color:var(--border2); }
+  .mission-task.done { background:rgba(26,158,92,.08);border-color:rgba(26,158,92,.3); }
+  .mission-task.done .mt-check { background:var(--green);border-color:var(--green);color:#fff; }
+  .mission-task.done .mt-title { text-decoration:line-through;color:var(--text2); }
+  .mission-task.done .mt-status { color:var(--green-light); }
+  .mt-check {
+    width:28px;height:28px;border-radius:7px;
+    border:2px solid var(--border2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.85rem;flex-shrink:0;transition:all .2s;color:transparent;
+  }
+  .mt-body { flex:1; }
+  .mt-title { font-size:.95rem;font-weight:700; }
+  .mt-time { font-size:.72rem;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace; }
+  .mt-status { font-size:.75rem;color:var(--text3);flex-shrink:0; }
+
+  /* ── MISSION STATUS BAR ── */
+  .msbar-wait    { background:rgba(26,107,181,.15);border:1px solid rgba(26,107,181,.3); }
+  .msbar-alert   { background:rgba(232,114,12,.18);border:1px solid rgba(232,114,12,.5); }
+  .msbar-active  { background:rgba(217,43,43,.2);border:1px solid rgba(217,43,43,.5); animation:msbarPulse 2s infinite; }
+  .msbar-cancel  { background:rgba(26,158,92,.12);border:1px solid rgba(26,158,92,.3); }
+  @keyframes msbarPulse { 0%,100%{opacity:1}50%{opacity:.8} }
+
+  /* ── CASE CARD COLORS in TRACK ── */
+  .cc.cc-alert   { background:rgba(232,114,12,.18);border-color:rgba(232,114,12,.6); }
+  .cc.cc-alert .cc-name { color:#FFB060;font-weight:800; }
+  .cc.cc-active  { background:rgba(217,43,43,.2);border-color:rgba(217,43,43,.7); }
+  .cc.cc-active .cc-name { color:#FF8080;font-weight:800; }
+  .cc.cc-done    { background:rgba(26,158,92,.08);border-color:rgba(26,158,92,.3); }
+  .cc.cc-done .cc-name { color:var(--green-light); }
+
+  /* ── NOTIFY PAGE JUMP BTN ── */
+  .notify-jump-btn {
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;padding:14px;margin-top:10px;
+    border-radius:var(--radius-sm);border:none;
+    font-family:inherit;font-size:1rem;font-weight:700;
+    cursor:pointer;transition:all .2s;
+  }
+  .njb-red { background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;box-shadow:0 3px 14px rgba(217,43,43,.4); }
+  .njb-red:hover { filter:brightness(1.1); }
+  .njb-blue { background:rgba(26,107,181,.2);border:1px solid rgba(26,107,181,.4);color:#5BA8E8; }
+  .njb-blue:hover { background:rgba(26,107,181,.3); }
+
+  /* ── TASK NAV BADGE (未完成閃爍) ── */
+  .ni.has-task .ni-ico::after {
+    content:'';position:absolute;top:0;right:0;
+    width:8px;height:8px;border-radius:50%;
+    background:var(--red);animation:pulse 1.5s infinite;
+  }
+  .ni { position:relative; }
+
 </style>
 </head>
 <body>
@@ -381,52 +593,136 @@
   <!-- PAGES -->
 
   <!-- ── EMT PAGE ── -->
+  <!-- ── EMT PAGE ── -->
   <div class="page" id="pageEMT">
     <div class="content">
-      <div id="emtForm">
-        <div class="card">
-          <div class="card-hd">
-            <div class="card-ico" style="background:rgba(232,114,12,.15);color:var(--orange)">🚑</div>
-            <div><div class="card-title">院前通報</div><div class="card-sub">EMT 填寫送出</div></div>
-            <div class="badge b-orange" style="margin-left:auto"><span class="dot"></span>待送出</div>
+      <div id="emtSent" class="hidden">
+        <div class="alert al-green"><span class="alert-icon">✅</span>
+          <div class="alert-body">
+            <strong>通報已送出</strong><br>
+            <span class="text-sm" id="emtSentTime"></span><br>
+            案件碼：<strong id="emtSentID" style="font-family:'JetBrains Mono',monospace;color:var(--yellow)"></strong>
           </div>
-          <div class="g2" style="gap:10px">
-            <div class="f"><label>患者姓名</label><input type="text" id="ePtName" placeholder="姓名或不詳"></div>
-            <div class="f"><label>年齡</label><input type="number" id="eAge" placeholder="歲" min="0" max="120"></div>
-            <div class="f"><label>性別</label><select id="eGender"><option value="">請選擇</option><option>男</option><option>女</option></select></div>
-            <div class="f"><label>CPR 開始時間</label><input type="time" id="eCprStart"></div>
-            <div class="f"><label>初始心律</label><select id="eRhythm"><option value="">請選擇</option><option>VF</option><option>pVT</option><option>PEA</option><option>Asystole</option></select></div>
-            <div class="f"><label>目擊者</label><select id="eWitness"><option value="">請選擇</option><option>有目擊者</option><option>無目擊者</option><option>EMT目擊</option></select></div>
-            <div class="f"><label>ROSC</label><select id="eROSC"><option value="no">無</option><option value="yes">有</option></select></div>
-            <div class="f"><label>預計到院時間</label><input type="time" id="eETA"></div>
-          </div>
-          <hr>
-          <div class="sec-title">ECPR 適用評估（勾選符合）</div>
-          <div class="cl" id="emtCritList">
-            <div class="ci" onclick="this.classList.toggle('done')"><div class="ci-box">✓</div><div class="ci-main"><div class="ci-text">年齡 18–70 歲</div></div></div>
-            <div class="ci" onclick="this.classList.toggle('done')"><div class="ci-box">✓</div><div class="ci-main"><div class="ci-text">有目擊者 OHCA</div></div></div>
-            <div class="ci" onclick="this.classList.toggle('done')"><div class="ci-box">✓</div><div class="ci-main"><div class="ci-text">CPR 時間 ≤ 60 分鐘</div></div></div>
-            <div class="ci" onclick="this.classList.toggle('done')"><div class="ci-box">✓</div><div class="ci-main"><div class="ci-text">可電擊心律（VF / pVT）</div></div></div>
-            <div class="ci" onclick="this.classList.toggle('done')"><div class="ci-box">✓</div><div class="ci-main"><div class="ci-text">無嚴重外傷</div></div></div>
-            <div class="ci" onclick="this.classList.toggle('done')"><div class="ci-box">✓</div><div class="ci-main"><div class="ci-text">無明顯不可逆因素</div></div></div>
-          </div>
-          <div class="f mt12"><label>備註</label><textarea id="eNote" placeholder="其他說明..."></textarea></div>
-          <div class="act"><button class="btn bo btn-lg btn-fw" onclick="submitEMT()">🚑 送出通報</button></div>
         </div>
+        <div class="card" style="border-color:rgba(232,114,12,.3)">
+          <div class="card-hd">
+            <div class="card-ico" style="background:rgba(232,114,12,.2);color:var(--orange)">📢</div>
+            <div><div class="card-title" style="color:var(--orange)">已發送通知</div><div class="card-sub">ECMO 團隊預警</div></div>
+          </div>
+          <div id="emtNotifyPreview" style="background:rgba(232,114,12,.08);border:1px solid rgba(232,114,12,.3);border-radius:var(--radius-sm);padding:13px;font-size:.9rem;line-height:1.8;color:#FFD080;white-space:pre-wrap;font-family:'JetBrains Mono',monospace"></div>
+        </div>
+        <div id="emtNpStatus" class="alert al-yellow"><span class="alert-icon">⏳</span><div class="alert-body">等待 NP 確認收到通報...</div></div>
+        <button class="btn bgh btn-fw mt8" onclick="resetEMT()">🔄 新案件</button>
       </div>
 
-      <div id="emtSent" class="hidden">
-        <div class="alert al-green"><span class="alert-icon">✅</span><div class="alert-body"><strong>通報已送出</strong><br><span class="text-sm" id="emtSentTime"></span></div></div>
-        <div class="card">
-          <div class="card-hd"><div class="card-ico" style="background:rgba(26,107,181,.15);color:var(--blue-light)">🏥</div><div><div class="card-title">等待 ED 確認</div></div></div>
-          <div id="emtNpStatus" class="alert al-yellow"><span class="alert-icon">⏳</span><div class="alert-body">等待 NP 確認收到通報...</div></div>
+      <div id="emtQuiz">
+        <div class="card" style="border-color:rgba(232,114,12,.3)">
+          <div style="text-align:center;padding:4px 0 14px">
+            <div style="font-size:1.25rem;font-weight:900;letter-spacing:.05em">🚑 ECPR 院前初篩</div>
+            <div style="font-size:.78rem;color:var(--text3);margin-top:4px">點選符合條件，完成後送出通報</div>
+          </div>
+
+          <!-- ① 年齡 -->
+          <div class="emt-section">
+            <div class="emt-sec-title">① 年齡</div>
+            <div class="emt-big-btn-row">
+              <button class="emt-big-btn" id="ebtn_age_yes" onclick="emtBigSelect('age','yes',this)">
+                <span class="ebb-ico">🧑</span>
+                <span class="ebb-lbl">18 – 70 歲</span>
+                <span class="ebb-hint">符合年齡範圍</span>
+              </button>
+              <button class="emt-big-btn emt-big-btn-no" id="ebtn_age_no" onclick="emtBigSelect('age','no',this)">
+                <span class="ebb-ico">👴</span>
+                <span class="ebb-lbl">71 歲以上</span>
+                <span class="ebb-hint">超出建議年齡</span>
+              </button>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- ② AED 可電擊 -->
+          <div class="emt-section">
+            <div class="emt-sec-title">② AED 可電擊心律</div>
+            <div class="emt-big-btn-row">
+              <button class="emt-big-btn" id="ebtn_shock_yes" onclick="emtBigSelect('shock','yes',this)">
+                <span class="ebb-ico">⚡</span>
+                <span class="ebb-lbl">可電擊</span>
+                <span class="ebb-hint">VF / pVT</span>
+              </button>
+              <button class="emt-big-btn emt-big-btn-no" id="ebtn_shock_no" onclick="emtBigSelect('shock','no',this)">
+                <span class="ebb-ico">📴</span>
+                <span class="ebb-lbl">不可電擊</span>
+                <span class="ebb-hint">PEA / Asystole</span>
+              </button>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- ③ CPR 狀況 -->
+          <div class="emt-section">
+            <div class="emt-sec-title">③ CPR 狀況</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="emt-big-btn emt-big-btn-wide" id="ebtn_cpr_ideal" onclick="emtBigSelect('cpr','ideal',this)">
+                <span class="ebb-ico">🟢</span>
+                <div><span class="ebb-lbl">CPR &lt; 30分 ＋ 有目擊 ＋ Bystander CPR</span><span class="ebb-hint">最佳條件，強烈建議啟動</span></div>
+              </button>
+              <button class="emt-big-btn emt-big-btn-wide emt-big-btn-border" id="ebtn_cpr_partial" onclick="emtBigSelect('cpr','partial',this)">
+                <span class="ebb-ico">🟡</span>
+                <div><span class="ebb-lbl">有持續 CPR（條件部分符合）</span><span class="ebb-hint">由 NP 評估決定</span></div>
+              </button>
+              <button class="emt-big-btn emt-big-btn-wide emt-big-btn-no" id="ebtn_cpr_no" onclick="emtBigSelect('cpr','no',this)">
+                <span class="ebb-ico">🔴</span>
+                <div><span class="ebb-lbl">CPR &gt; 60分 或 無 CPR</span><span class="ebb-hint">不符合時間條件</span></div>
+              </button>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- ④ 排除條件 -->
+          <div class="emt-section">
+            <div class="emt-sec-title excl-title">🚫 ④ 排除條件（有則勾選，任一項即不建議啟動）</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="emt-excl" id="eexcl_terminal" data-key="excl_terminal" onclick="emtToggleExcl(this)">
+                <span class="ec-ico">🏥</span>
+                <div class="ec-main"><div class="ec-title">末期病人</div><div class="ec-hint">癌末、器官衰竭末期</div></div>
+                <span class="excl-check">○</span>
+              </button>
+              <button class="emt-excl" id="eexcl_bedridden" data-key="excl_bedridden" onclick="emtToggleExcl(this)">
+                <span class="ec-ico">🛏️</span>
+                <div class="ec-main"><div class="ec-title">長期臥床 &gt; 6 個月</div><div class="ec-hint">功能狀態差，預後不良</div></div>
+                <span class="excl-check">○</span>
+              </button>
+              <button class="emt-excl" id="eexcl_dementia" data-key="excl_dementia" onclick="emtToggleExcl(this)">
+                <span class="ec-ico">🧠</span>
+                <div class="ec-main"><div class="ec-title">嚴重失智 / 植物人</div><div class="ec-hint">認知功能嚴重受損</div></div>
+                <span class="excl-check">○</span>
+              </button>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- ⑤ 到院時間 -->
+          <div class="emt-section">
+            <div class="emt-sec-title">⑤ 預計到院時間</div>
+            <input type="time" id="eETA" style="width:100%;padding:12px;font-size:1.1rem;text-align:center;background:var(--bg4);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text)">
+          </div>
+
+          <!-- 即時評估結論 -->
+          <div id="emtLiveResult" style="margin:14px 0 4px"></div>
+
+          <button class="btn bo btn-lg btn-fw" id="emtSubmitBtn" onclick="submitEMT()" style="font-size:1.2rem;font-weight:900;padding:18px;margin-top:4px;letter-spacing:.05em">
+            🚑 確認送出通報
+          </button>
+          <div style="font-size:.72rem;color:var(--text3);text-align:center;margin-top:8px">不論符合與否皆會記錄，由 NP 最終評估</div>
         </div>
-        <button class="btn bgh btn-fw mt8" onclick="resetEMT()">重新填寫</button>
       </div>
     </div>
   </div>
 
-  <!-- ── NURSE PAGE ── -->
   <div class="page" id="pageNurse">
     <div class="content">
       <div id="nurseNoCase">
@@ -580,16 +876,15 @@
         <button class="btn bgh btn-sm" onclick="loadCases()">🔄 重整</button>
       </div>
 
-      <!-- Active case summary (always on top if exists) -->
+      <!-- 進行中案件 (置頂) -->
       <div id="trackActiveSummary"></div>
 
-      <!-- All cases list -->
+      <!-- 所有案件列表 -->
       <div id="trackCaseList">
         <div class="empty"><div class="ei">📋</div><p>載入中...</p></div>
       </div>
     </div>
   </div>
-
   <!-- ── CASE DETAIL PAGE ── -->
   <div class="page" id="pageCaseDetail">
     <div class="content">
@@ -597,6 +892,295 @@
       <div id="caseDetailContent"></div>
     </div>
   </div>
+  <!-- ── NOTIFY PAGE ── -->
+  <!-- ── MISSION PAGE（任務頁）── -->
+  <div class="page" id="pageMission">
+    <div class="content">
+
+      <!-- 無案件 -->
+      <div id="missionNoCase">
+        <div class="alert al-blue"><span class="alert-icon">📋</span>
+          <div class="alert-body">目前無進行中任務。有案件啟動後將顯示於此。</div>
+        </div>
+      </div>
+
+      <!-- 有案件 -->
+      <div id="missionCase" class="hidden">
+
+        <!-- 任務狀態指示條 -->
+        <div id="missionStatusBar" style="padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:12px;display:flex;align-items:center;gap:10px">
+          <span id="missionStatusIcon" style="font-size:1.5rem">⏳</span>
+          <div>
+            <div id="missionStatusTitle" style="font-size:1rem;font-weight:800"></div>
+            <div id="missionStatusSub" style="font-size:.75rem;color:rgba(255,255,255,.7)"></div>
+          </div>
+        </div>
+
+        <!-- 案件簡介 -->
+        <div class="card" id="missionCaseCard">
+          <div class="card-hd">
+            <div class="card-ico" style="background:rgba(217,43,43,.15);color:var(--red)">🫀</div>
+            <div>
+              <div class="card-title" id="missionCaseId">案件 —</div>
+              <div class="card-sub" id="missionCaseTime">—</div>
+            </div>
+          </div>
+          <div class="info-grid" id="missionCaseInfo"></div>
+          <!-- 啟動者資訊 -->
+          <div id="missionActivatorInfo" class="hidden" style="margin-top:8px">
+            <div class="alert al-red" style="margin-bottom:0">
+              <span class="alert-icon">⚡</span>
+              <div class="alert-body">
+                <strong>ECPR 已正式啟動</strong><br>
+                <span class="text-sm">確認者：<span id="missionActivatorName"></span></span><br>
+                <span class="text-sm" id="missionActivatorTime"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ NP/DR/CVS 操作區 ══ -->
+        <div id="missionDecisionArea" class="hidden">
+
+          <!-- 啟動決策 -->
+          <div class="card" id="missionDecCard">
+            <div class="card-hd">
+              <div class="card-ico" style="background:rgba(217,43,43,.15);color:var(--red)">⚡</div>
+              <div><div class="card-title">ECPR 啟動決策</div><div class="card-sub">NP / 急診醫師 / CVS 任一可確認</div></div>
+            </div>
+
+            <!-- 待決策 -->
+            <div id="mdPending" class="hidden">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+                <button class="act-btn-confirm" onclick="specConfirmActivate()">⚡ 確認啟動 ECPR</button>
+                <button class="act-btn-cancel" onclick="specCancelActivate()">✋ 取消啟動</button>
+              </div>
+              <div style="font-size:.75rem;color:var(--text3);text-align:center">按下後記錄決策者，並通知 OR / 體循師</div>
+            </div>
+            <!-- 我已啟動 -->
+            <div id="mdIActivated" class="hidden">
+              <div class="alert al-red" style="margin-bottom:8px"><span class="alert-icon">⚡</span>
+                <div class="alert-body"><strong>您已確認啟動 ECPR</strong><br><span class="text-sm" id="mdIActTime"></span></div>
+              </div>
+              <button class="btn bgh btn-fw btn-sm" onclick="specReassess()">🔄 重新評估</button>
+            </div>
+            <!-- 我已取消 -->
+            <div id="mdICancelled" class="hidden">
+              <div class="alert al-green" style="margin-bottom:8px"><span class="alert-icon">✋</span>
+                <div class="alert-body"><strong>您已評估：不啟動 ECPR</strong><br><span class="text-sm" id="mdICancelTime"></span></div>
+              </div>
+              <button class="btn bgh btn-fw btn-sm" onclick="specReassess()">🔄 重新評估</button>
+            </div>
+            <!-- 他人已啟動 → 我確認收到 -->
+            <div id="mdOtherActivated" class="hidden">
+              <div class="alert al-red" style="margin-bottom:12px"><span class="alert-icon" style="font-size:1.3rem">⚡</span>
+                <div class="alert-body"><strong id="mdOtherActBy"></strong> 已確認啟動 ECPR<br><span class="text-sm" id="mdOtherActTime"></span></div>
+              </div>
+              <button class="act-btn-confirm" id="mdAckActBtn" onclick="missionAckActivate()" style="font-size:1rem;padding:16px">
+                ✅ 已收到啟動通知，立即前往
+              </button>
+              <div id="mdAckedAct" class="hidden" style="margin-top:8px">
+                <div class="alert al-green"><span class="alert-icon">✅</span>
+                  <div class="alert-body">已確認收到 — <span id="mdAckedActTime"></span></div>
+                </div>
+              </div>
+            </div>
+            <!-- 他人已取消 → 我確認收到 -->
+            <div id="mdOtherCancelled" class="hidden">
+              <div class="alert al-yellow" style="margin-bottom:12px"><span class="alert-icon">✋</span>
+                <div class="alert-body"><strong id="mdOtherCancelBy"></strong> 評估：不啟動<br><span class="text-sm" id="mdOtherCancelTime"></span></div>
+              </div>
+              <button class="act-btn-cancel" id="mdAckCancelBtn" onclick="missionAckCancel()" style="font-size:1rem;padding:16px">
+                ✅ 已收到取消通知
+              </button>
+              <div id="mdAckedCancel" class="hidden" style="margin-top:8px">
+                <div class="alert al-green"><span class="alert-icon">✅</span>
+                  <div class="alert-body">已確認收到 — <span id="mdAckedCancelTime"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SDM 評估（常駐可點） -->
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico" style="background:rgba(26,107,181,.15);color:var(--blue-light)">🧬</div>
+              <div><div class="card-title">預後因子確認 — SDM</div><div class="card-sub">可選填，供家屬溝通記錄，不影響啟動決策</div></div>
+              <button class="btn bgh btn-sm" style="margin-left:auto" onclick="toggleMissionSDM()" id="missionSDMToggle">展開 ▼</button>
+            </div>
+            <div id="missionSDMBody" class="hidden">
+              <div class="sec-title">可能原因</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+                <button class="emt-big-btn emt-big-btn-wide" data-cause="ACS" onclick="toggleCause(this)" style="min-height:52px;padding:10px 12px">
+                  <span class="ebb-ico" style="font-size:1.2rem">❤️</span><div><span class="ebb-lbl" style="font-size:.85rem">ACS</span></div>
+                </button>
+                <button class="emt-big-btn emt-big-btn-wide" data-cause="PE" onclick="toggleCause(this)" style="min-height:52px;padding:10px 12px">
+                  <span class="ebb-ico" style="font-size:1.2rem">🫁</span><div><span class="ebb-lbl" style="font-size:.85rem">肺栓塞</span></div>
+                </button>
+                <button class="emt-big-btn emt-big-btn-wide" data-cause="myocarditis" onclick="toggleCause(this)" style="min-height:52px;padding:10px 12px">
+                  <span class="ebb-ico" style="font-size:1.2rem">🦠</span><div><span class="ebb-lbl" style="font-size:.85rem">心肌炎</span></div>
+                </button>
+                <button class="emt-big-btn emt-big-btn-wide" data-cause="toxin" onclick="toggleCause(this)" style="min-height:52px;padding:10px 12px">
+                  <span class="ebb-ico" style="font-size:1.2rem">☠️</span><div><span class="ebb-lbl" style="font-size:.85rem">毒物/藥物</span></div>
+                </button>
+                <button class="emt-big-btn emt-big-btn-wide" data-cause="hypothermia" onclick="toggleCause(this)" style="min-height:52px;padding:10px 12px">
+                  <span class="ebb-ico" style="font-size:1.2rem">🥶</span><div><span class="ebb-lbl" style="font-size:.85rem">低體溫</span></div>
+                </button>
+                <button class="emt-big-btn emt-big-btn-wide" data-cause="unknown" onclick="toggleCause(this)" style="min-height:52px;padding:10px 12px">
+                  <span class="ebb-ico" style="font-size:1.2rem">❓</span><div><span class="ebb-lbl" style="font-size:.85rem">不明原因</span></div>
+                </button>
+              </div>
+              <hr>
+              <div class="sec-title">Lactate / pH 預後評估（本院實證轉譯）</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+                <div class="f"><label>Lactate (mmol/L)</label>
+                  <input type="number" id="msdmLactate" placeholder="例：6.2" step="0.1" oninput="updateMissionSDMZone()"
+                    style="font-size:1.3rem;text-align:center;padding:12px;font-family:'JetBrains Mono',monospace"></div>
+                <div class="f"><label>pH</label>
+                  <input type="number" id="msdmPH" placeholder="例：7.05" step="0.01" oninput="updateMissionSDMZone()"
+                    style="font-size:1.3rem;text-align:center;padding:12px;font-family:'JetBrains Mono',monospace"></div>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px">
+                <div style="display:grid;grid-template-columns:auto 1fr 1fr auto;padding:7px 12px;background:var(--bg4);border-bottom:1px solid var(--border)">
+                  <span style="font-size:.68rem;color:var(--text3)">區間</span><span style="font-size:.68rem;color:var(--text3)">Lactate</span>
+                  <span style="font-size:.68rem;color:var(--text3)">pH</span><span style="font-size:.68rem;color:var(--text3)">存活率</span>
+                </div>
+                <div class="sdm-zone-row" id="mzone-green" style="background:rgba(26,158,92,.08)">
+                  <span>✅</span><span style="font-weight:700;color:var(--green-light)">&lt;6</span>
+                  <span style="font-weight:700;color:var(--green-light)">≥7.0</span><span style="font-size:.8rem;color:var(--green-light)">≥10%</span>
+                </div>
+                <div class="sdm-zone-row" id="mzone-yellow" style="background:rgba(245,166,35,.08);border-top:1px solid var(--border)">
+                  <span>⚠️</span><span style="font-weight:700;color:#FFD060">6–11</span>
+                  <span style="font-weight:700;color:#FFD060">6.9–7.0</span><span style="font-size:.8rem;color:#FFD060">5–10%</span>
+                </div>
+                <div class="sdm-zone-row" id="mzone-red" style="background:rgba(217,43,43,.08);border-top:1px solid var(--border)">
+                  <span>❌</span><span style="font-weight:700;color:#FF8080">&gt;11</span>
+                  <span style="font-weight:700;color:#FF8080">&lt;6.9</span><span style="font-size:.8rem;color:#FF8080">&lt;5%</span>
+                </div>
+              </div>
+              <div id="msdmZoneResult" style="display:none;margin-bottom:10px"></div>
+              <div style="font-size:.7rem;color:var(--text3);line-height:1.5;margin-bottom:12px">
+                ※ 本院24例：Lac 6.23 vs 11.53；pH 7.088 vs 6.892｜切點為文獻估計值
+              </div>
+              <div class="f" style="margin-bottom:12px">
+                <label>家屬溝通記錄</label>
+                <textarea id="msdmNote" placeholder="記錄溝通內容、家屬反應..." style="min-height:72px"></textarea>
+              </div>
+              <button class="btn bb btn-fw" onclick="saveMissionSDM()">💾 儲存 SDM 評估</button>
+            </div>
+          </div>
+        </div><!-- end missionDecisionArea -->
+
+        <!-- ══ OR / 體循師 操作區 ══ -->
+        <div id="missionReceiveArea" class="hidden">
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico" style="background:rgba(26,158,92,.15);color:var(--green)">📨</div>
+              <div><div class="card-title">收到啟動通知</div><div class="card-sub">確認收到後立即前往</div></div>
+            </div>
+            <div id="mrecWaiting">
+              <div class="alert al-blue"><span class="alert-icon">⏳</span>
+                <div class="alert-body">等待啟動決策中，請待命...</div>
+              </div>
+            </div>
+            <div id="mrecActivated" class="hidden">
+              <div class="alert al-red" style="margin-bottom:12px">
+                <span class="alert-icon" style="font-size:1.3rem">⚡</span>
+                <div class="alert-body">
+                  <strong style="font-size:1.1rem">ECPR 已正式啟動！</strong><br>
+                  <span class="text-sm">確認者：<span id="mrecActBy">—</span></span><br>
+                  <span class="text-sm" id="mrecActTime"></span>
+                </div>
+              </div>
+              <button class="act-btn-confirm" id="mrecAckBtn" onclick="missionRecAckActivate()" style="font-size:1.05rem;padding:16px">
+                ✅ 已收到啟動通知，立即前往
+              </button>
+              <div id="mrecAckedMsg" class="hidden" style="margin-top:10px">
+                <div class="alert al-green"><span class="alert-icon">✅</span>
+                  <div class="alert-body">已確認收到 — <span id="mrecAckedTime"></span></div>
+                </div>
+              </div>
+            </div>
+            <div id="mrecCancelled" class="hidden">
+              <div class="alert al-yellow" style="margin-bottom:12px"><span class="alert-icon">✋</span>
+                <div class="alert-body"><strong>評估結果：不啟動 ECPR</strong><br>
+                  <span class="text-sm">決策者：<span id="mrecCancelBy">—</span></span></div>
+              </div>
+              <button class="act-btn-cancel" id="mrecAckCancelBtn" onclick="missionRecAckCancel()" style="font-size:1.05rem;padding:16px">
+                ✅ 已收到取消通知
+              </button>
+              <div id="mrecAckedCancelMsg" class="hidden" style="margin-top:10px">
+                <div class="alert al-green"><span class="alert-icon">✅</span>
+                  <div class="alert-body">已確認收到 — <span id="mrecAckedCancelTime"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- end missionReceiveArea -->
+
+        <!-- ══ 護理師 操作區 ══ -->
+        <div id="missionNurseArea" class="hidden">
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico" style="background:rgba(26,158,92,.15);color:var(--green)">✅</div>
+              <div><div class="card-title">護理師任務清單</div><div class="card-sub">勾選完成即同步里程碑</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px" id="nurseTaskList">
+              <div class="mission-task" data-task="team" onclick="toggleMissionTask(this)">
+                <div class="mt-check">✓</div>
+                <div class="mt-body">
+                  <div class="mt-title">1. 團隊就位</div>
+                  <div class="mt-time" id="mt-team-time"></div>
+                </div>
+                <div class="mt-status">待完成</div>
+              </div>
+              <div class="mission-task" data-task="cannula" onclick="toggleMissionTask(this)">
+                <div class="mt-check">✓</div>
+                <div class="mt-body">
+                  <div class="mt-title">2. 導管放置完成</div>
+                  <div class="mt-time" id="mt-cannula-time"></div>
+                </div>
+                <div class="mt-status">待完成</div>
+              </div>
+              <div class="mission-task" data-task="xray" onclick="toggleMissionTask(this)">
+                <div class="mt-check">✓</div>
+                <div class="mt-body">
+                  <div class="mt-title">3. X光確認導管位置</div>
+                  <div class="mt-time" id="mt-xray-time"></div>
+                </div>
+                <div class="mt-status">待完成</div>
+              </div>
+              <div class="mission-task" data-task="icu" onclick="toggleMissionTask(this)">
+                <div class="mt-check">✓</div>
+                <div class="mt-body">
+                  <div class="mt-title">4. 轉入 ICU</div>
+                  <div class="mt-time" id="mt-icu-time"></div>
+                </div>
+                <div class="mt-status">待完成</div>
+              </div>
+            </div>
+            <!-- 進度條 -->
+            <div class="prog-wrap" style="margin-top:14px"><div class="prog-fill" id="nurseTaskProg" style="width:0%"></div></div>
+            <div class="prog-lbl" id="nurseTaskProgLbl">0 / 4</div>
+          </div>
+        </div><!-- end missionNurseArea -->
+
+      </div><!-- end missionCase -->
+    </div>
+  </div>
+
+  <div class="page" id="pageNotify">
+    <div class="content">
+      <div class="flex aic g8" style="margin-bottom:14px">
+        <div style="font-size:1rem;font-weight:700;flex:1">📢 通知記錄</div>
+        <button class="btn bgh btn-sm" onclick="clearNotifyLog()">清除</button>
+      </div>
+      <div id="notifyLogList">
+        <div class="empty"><div class="ei">🔔</div><p>尚無通知記錄</p></div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- ── ADMIN PAGE ── -->
   <div class="page" id="pageAdmin">
@@ -745,14 +1329,14 @@ const ROLES = {
 
 // Nav config per role
 const NAV_CONFIG = {
-  emt:   [{ ico:'🚑', lbl:'通報', page:'pageEMT' },   { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  dr:    [{ ico:'🩺', lbl:'案件', page:'pageSpecialist' }, { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  np:    [{ ico:'⚡', lbl:'啟動', page:'pageNP' },    { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  cvs:   [{ ico:'🫀', lbl:'案件', page:'pageSpecialist' }, { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  or:    [{ ico:'🏥', lbl:'案件', page:'pageSpecialist' }, { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  perf:  [{ ico:'⚙️', lbl:'案件', page:'pageSpecialist' }, { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  nurse: [{ ico:'💉', lbl:'急救', page:'pageNurse' }, { ico:'📋', lbl:'追蹤', page:'pageTrack' }],
-  admin: [{ ico:'⚙️', lbl:'管理', page:'pageAdmin' },  { ico:'📋', lbl:'追蹤', page:'pageTrack' }]
+  emt:   [{ ico:'🚑', lbl:'通報',  page:'pageEMT' },      { ico:'📋', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  dr:    [{ ico:'📋', lbl:'任務',  page:'pageMission' },   { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  np:    [{ ico:'📋', lbl:'任務',  page:'pageMission' },   { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  cvs:   [{ ico:'📋', lbl:'任務',  page:'pageMission' },   { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  or:    [{ ico:'📋', lbl:'任務',  page:'pageMission' },   { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  perf:  [{ ico:'📋', lbl:'任務',  page:'pageMission' },   { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  nurse: [{ ico:'📋', lbl:'任務',  page:'pageMission' },   { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }],
+  admin: [{ ico:'⚙️', lbl:'管理',  page:'pageAdmin' },     { ico:'🗂️', lbl:'追蹤', page:'pageTrack' }, { ico:'🔔', lbl:'通知', page:'pageNotify' }]
 };
 
 // ════════════════════════════════════════
@@ -885,15 +1469,17 @@ function initApp() {
 
   // Default page
   const defaultPage = {
-    emt: 'pageEMT', dr: 'pageSpecialist', np: 'pageNP',
-    cvs: 'pageSpecialist', or: 'pageSpecialist', perf: 'pageSpecialist',
-    nurse: 'pageNurse', admin: 'pageAdmin'
+    emt: 'pageEMT', dr: 'pageMission', np: 'pageMission',
+    cvs: 'pageMission', or: 'pageMission', perf: 'pageMission',
+    nurse: 'pageMission', admin: 'pageAdmin'
   };
-  showPage(defaultPage[CU.role] || 'pageTrack');
+  showPage(defaultPage[CU.role] || 'pageMission');
 
   if (CU.role === 'admin') loadAccounts();
   loadActiveCase();
   loadCases();
+  // 有任務的角色自動載入任務頁
+  if (['np','dr','cvs','or','perf','nurse'].includes(CU.role)) loadMission();
 }
 
 function updateUserUI() {
@@ -934,8 +1520,24 @@ function showPage(pageId, navBtn = null) {
   else document.querySelectorAll(`[data-page="${pageId}"]`).forEach(b => b.classList.add('on'));
 
   if (pageId === 'pageTrack') { loadCases(); buildTrackSummary(); }
-  if (pageId === 'pageAdmin') loadAccounts();
-  if (pageId === 'pageAdmin') loadSchedule();
+  if (pageId === 'pageMission') {
+    loadMission();
+    // 如果有進行中通知，確認通知頁紅點
+    const log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
+    if (log.length) {
+      const notifyBtn = document.querySelector('[data-page="pageNotify"]');
+      if (notifyBtn) notifyBtn.classList.add('has-task');
+    }
+  }
+  if (pageId === 'pageAdmin') { loadAccounts(); loadSchedule(); }
+  if (pageId === 'pageNotify') renderNotifyLog();
+  // 離開 specialist 頁停止輪詢
+  if (pageId !== 'pageSpecialist' && typeof specPollInterval !== 'undefined' && specPollInterval) {
+    clearInterval(specPollInterval); specPollInterval = null;
+  }
+  if (pageId !== 'pageMission' && typeof missionPollInterval !== 'undefined' && missionPollInterval) {
+    clearInterval(missionPollInterval); missionPollInterval = null;
+  }
 }
 
 function goToTrack() {
@@ -990,7 +1592,7 @@ async function switchUser(username, password) {
     };
     updateUserUI();
     buildNav();
-    const defaultPage = { emt:'pageEMT', dr:'pageSpecialist', np:'pageNP', cvs:'pageSpecialist', or:'pageSpecialist', perf:'pageSpecialist', nurse:'pageNurse', admin:'pageAdmin' };
+    const defaultPage = { emt:'pageEMT', dr:'pageMission', np:'pageMission', cvs:'pageMission', or:'pageMission', perf:'pageMission', nurse:'pageMission', admin:'pageAdmin' };
     showPage(defaultPage[CU.role] || 'pageTrack');
     toast('已切換至 ' + CU.displayname, 'ok');
     if (activeCase) updateAllCaseViews(activeCase);
@@ -1011,7 +1613,14 @@ async function loadActiveCase() {
   const res = await api('getCases');
   if (!res.success || !res.cases) return;
   const c = res.cases.find(c => ['pending','active','activated'].includes(c.status));
-  if (c) setActiveCase(c);
+  if (c) {
+    setActiveCase(c);
+    // 同步到任務頁
+    if (['np','dr','cvs','or','perf','nurse'].includes(CU?.role)) {
+      missionCase = c;
+      if (typeof renderMission === 'function') renderMission(c);
+    }
+  }
 }
 
 function setActiveCase(c) {
@@ -1028,8 +1637,13 @@ function setActiveCase(c) {
 function updateAllCaseViews(c) {
   updateNurseView(c);
   updateNPView(c);
-  updateSpecView(c);
-  updateTrackSummary(c);
+  if (['np','dr','cvs','or','perf'].includes(CU?.role)) updateSpecView(c);
+  // 任務頁同步更新
+  if (typeof renderMission === 'function' && ['np','dr','cvs','or','perf','nurse'].includes(CU?.role)) {
+    missionCase = c;
+    renderMission(c);
+  }
+  buildTrackSummary();
 }
 
 function updatePatientBanner(c) {
@@ -1073,47 +1687,778 @@ function fmtTime(s) {
 }
 
 // ════════════════════════════════════════
-//  EMT
+//  EMT — 單頁式
 // ════════════════════════════════════════
-async function submitEMT() {
-  const ptName = document.getElementById('ePtName').value.trim() || '不詳';
-  const age = document.getElementById('eAge').value;
-  const gender = document.getElementById('eGender').value;
-  const cprStart = document.getElementById('eCprStart').value;
-  const rhythm = document.getElementById('eRhythm').value;
-  const witness = document.getElementById('eWitness').value;
-  const rosc = document.getElementById('eROSC').value;
-  const eta = document.getElementById('eETA').value;
-  const note = document.getElementById('eNote').value;
+let emtState = { age: null, shock: null, cpr: null, excl_terminal: false, excl_bedridden: false, excl_dementia: false };
+let notifyLog = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
 
-  confirm2('送出院前通報', `確認送出 ${ptName} 的通報？`, async () => {
-    const caseId = 'C' + Date.now();
-    const res = await api('saveCase', {
-      case: {
-        CaseID: caseId, reportTime: new Date().toISOString(),
-        unit: CU.unit, ptName, patientAge: age, gender,
-        rhythm, witnessed: witness, bystanderCPR: '', cprStart,
-        eta, rosc, note,
-        status: 'pending', source: 'emt', emtUser: CU.username
-      }
-    });
-    if (res.success) {
-      toast('通報已送出', 'ok');
-      document.getElementById('emtForm').classList.add('hidden');
-      document.getElementById('emtSent').classList.remove('hidden');
-      document.getElementById('emtSentTime').textContent = '送出時間：' + new Date().toLocaleTimeString('zh-TW');
-      activeCase = { CaseID: caseId, patientAge: age, gender, rhythm, status:'pending' };
-      updatePatientBanner(activeCase);
-    } else {
-      toast('送出失敗：' + (res.message||''), 'err');
+function emtBigSelect(group, val, btn) {
+  // 清除同組選擇
+  document.querySelectorAll(`[id^="ebtn_${group}_"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  emtState[group] = val;
+  emtUpdateResult();
+}
+
+function emtToggleExcl(btn) {
+  const key = btn.dataset.key;
+  btn.classList.toggle('selected');
+  btn.querySelector('.excl-check').textContent = btn.classList.contains('selected') ? '✕' : '○';
+  emtState[key] = btn.classList.contains('selected');
+  emtUpdateResult();
+}
+
+function emtCalcVerdict() {
+  const hasExcl = emtState.excl_terminal || emtState.excl_bedridden || emtState.excl_dementia;
+  if (hasExcl) return 'no';
+  if (!emtState.age || !emtState.shock || !emtState.cpr) return null; // 未完成
+  if (emtState.age === 'no' || emtState.shock === 'no' || emtState.cpr === 'no') return 'no';
+  if (emtState.age === 'yes' && emtState.shock === 'yes' && emtState.cpr === 'ideal') return 'yes';
+  return 'borderline';
+}
+
+function emtUpdateResult() {
+  const v = emtCalcVerdict();
+  const el = document.getElementById('emtLiveResult');
+  if (!v) { el.innerHTML = ''; return; }
+  const map = {
+    yes: { cls:'lr-go', icon:'🟢', title:'建議啟動 ECPR', sub:'符合初篩條件，送出後 NP 確認啟動' },
+    borderline: { cls:'lr-border', icon:'🟡', title:'由 NP 評估', sub:'部分條件待確認，通報後由 NP 決定' },
+    no: { cls:'lr-no', icon:'🔴', title:'不建議啟動', sub:'不符合初篩，仍會記錄供 NP 參考' }
+  };
+  const m = map[v];
+  el.innerHTML = `<div class="live-result ${m.cls}">
+    <strong>${m.icon} ${m.title}</strong><br>
+    <span style="font-size:.8rem">${m.sub}</span>
+  </div>`;
+}
+
+function buildNotifyMsg(caseId, unit, verdict) {
+  const verdictText = { yes:'✅ 符合初篩條件', borderline:'⚠️ 部分符合，待評估', no:'❌ 不符合初篩' };
+  const now = new Date().toLocaleString('zh-TW', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  return `【ECMO 團隊預警】
+🏥 來源：${unit || 'EMT 分隊'}
+🚑 現場狀況：${verdictText[verdict] || '—'}
+📋 案件碼：${caseId}
+⏰ 預警時間：${now}
+
+請各團隊留意手機，等待正式啟動通知。`;
+}
+
+function saveNotify(msg, caseId, verdict) {
+  const entry = {
+    id: Date.now(),
+    caseId, verdict, msg,
+    time: new Date().toISOString(),
+    type: 'emt_alert'
+  };
+  notifyLog.unshift(entry);
+  if (notifyLog.length > 50) notifyLog = notifyLog.slice(0,50);
+  localStorage.setItem('ecpr_notify_log', JSON.stringify(notifyLog));
+}
+
+async function submitEMT() {
+  const verdict = emtCalcVerdict();
+  const eta = document.getElementById('eETA').value;
+  const unit = CU.unit || 'EMT 分隊';
+
+  const btn = document.getElementById('emtSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>送出中...';
+
+  const caseId = 'C' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Date.now()).slice(-3);
+  const notifyMsg = buildNotifyMsg(caseId, unit, verdict || 'borderline');
+
+  const res = await api('saveCase', {
+    case: {
+      CaseID: caseId,
+      reportTime: new Date().toISOString(),
+      unit,
+      shock: emtState.shock,
+      cprCondition: emtState.cpr,
+      excl_terminal: emtState.excl_terminal,
+      excl_bedridden: emtState.excl_bedridden,
+      excl_dementia: emtState.excl_dementia,
+      ecprVerdict: verdict || 'borderline',
+      eta,
+      status: 'pending',
+      source: 'emt',
+      emtUser: CU.username
     }
-  }, 'orange', '確認送出');
+  });
+
+  if (res.success) {
+    saveNotify(notifyMsg, caseId, verdict || 'borderline');
+    toast('通報已送出', 'ok');
+    document.getElementById('emtQuiz').classList.add('hidden');
+    document.getElementById('emtSent').classList.remove('hidden');
+    document.getElementById('emtSentTime').textContent = '送出時間：' + new Date().toLocaleTimeString('zh-TW');
+    document.getElementById('emtSentID').textContent = caseId;
+    document.getElementById('emtNotifyPreview').textContent = notifyMsg;
+    activeCase = { CaseID: caseId, shock: emtState.shock, status:'pending' };
+    updatePatientBanner(activeCase);
+  } else {
+    toast('送出失敗：' + (res.message||''), 'err');
+    btn.disabled = false;
+    btn.innerHTML = '🚑 確認送出通報';
+  }
 }
 
 function resetEMT() {
-  document.getElementById('emtForm').classList.remove('hidden');
+  emtState = { age:null, shock:null, cpr:null, excl_terminal:false, excl_bedridden:false, excl_dementia:false };
+  document.querySelectorAll('.emt-big-btn, .emt-excl').forEach(b => {
+    b.classList.remove('selected');
+    const check = b.querySelector('.excl-check');
+    if (check) check.textContent = '○';
+  });
+  document.getElementById('emtLiveResult').innerHTML = '';
+  document.getElementById('emtQuiz').classList.remove('hidden');
   document.getElementById('emtSent').classList.add('hidden');
+  const btn = document.getElementById('emtSubmitBtn');
+  if (btn) { btn.disabled = false; btn.innerHTML = '🚑 確認送出通報'; }
 }
+
+// ── 通知記錄 ──
+function renderNotifyLog() {
+  const wrap = document.getElementById('notifyLogList');
+  if (!wrap) return;
+  const log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
+  // 通知頁有記錄時，讓任務頁導覽徽章亮起
+  const notifyNavBtn = document.querySelector('[data-page="pageNotify"]');
+  if (notifyNavBtn && log.length) notifyNavBtn.classList.add('has-task');
+  if (!log.length) { wrap.innerHTML = '<div class="empty"><div class="ei">🔔</div><p>尚無通知記錄</p></div>'; return; }
+  const verdictMap = { yes:'建議啟動', borderline:'待評估', no:'不建議啟動' };
+  const verdictColor = { yes:'var(--green-light)', borderline:'#FFD060', no:'#FF8080' };
+  wrap.innerHTML = log.map(n => {
+    const dt = new Date(n.time).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div class="notify-item">
+      <div class="ni-head">
+        <span class="ni-tag" style="background:rgba(26,107,181,.15);color:#5BA8E8">EMT 通報</span>
+        <span style="font-size:.78rem;color:${verdictColor[n.verdict]||'var(--text2)'}">${verdictMap[n.verdict]||''}</span>
+        <span class="ni-time">${dt}</span>
+      </div>
+      <div class="ni-body">${n.msg}</div>
+    </div>`;
+  }).join('');
+}
+
+function clearNotifyLog() {
+  if (!confirm('確認清除所有通知記錄？')) return;
+  localStorage.removeItem('ecpr_notify_log');
+  renderNotifyLog();
+}
+
+// 從通知頁跳到任務頁並載入
+function goToMissionFromNotify() {
+  showPage('pageMission', document.querySelector('[data-page="pageMission"]'));
+}
+
+
+// ════════════════════════════════════════
+//  MISSION PAGE — 任務頁（所有角色）
+// ════════════════════════════════════════
+let missionCase = null;
+let missionPollInterval = null;
+let missionSDMOpen = false;
+
+async function loadMission() {
+  const res = await api('getCases');
+  if (!res.success || !res.cases) return;
+  // 找進行中案件（優先啟動中）
+  const active = res.cases.find(c => c.status === 'activated')
+    || res.cases.find(c => ['pending','active','cancelled'].includes(c.status));
+  if (!active) {
+    document.getElementById('missionNoCase').classList.remove('hidden');
+    document.getElementById('missionCase').classList.add('hidden');
+    return;
+  }
+  missionCase = active;
+  renderMission(active);
+  startMissionPoll();
+}
+
+function startMissionPoll() {
+  if (missionPollInterval) clearInterval(missionPollInterval);
+  missionPollInterval = setInterval(async () => {
+    if (!missionCase) return;
+    const res = await api('getCases');
+    if (!res.success) return;
+    const updated = res.cases.find(c => c.CaseID === missionCase.CaseID);
+    if (!updated) return;
+    const changed = updated.ecprActivated !== missionCase.ecprActivated
+      || updated.ecprCancelled !== missionCase.ecprCancelled;
+    if (changed) { missionCase = updated; renderMission(updated); }
+  }, 8000);
+}
+
+function renderMission(c) {
+  document.getElementById('missionNoCase').classList.add('hidden');
+  document.getElementById('missionCase').classList.remove('hidden');
+
+  // 案件簡介
+  document.getElementById('missionCaseId').textContent = '案件 ' + (c.CaseID||'—');
+  document.getElementById('missionCaseTime').textContent = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW') : '—';
+  document.getElementById('missionCaseInfo').innerHTML = `
+    <div class="ic"><div class="k">AED心律</div><div class="v">${c.shock==='yes'?'⚡ 可電擊':c.shock==='no'?'不可電擊':'—'}</div></div>
+    <div class="ic"><div class="k">CPR狀況</div><div class="v">${{ideal:'最佳',partial:'部分符合',no:'不符合'}[c.cprCondition]||'—'}</div></div>
+    <div class="ic"><div class="k">初篩結論</div><div class="v" style="color:${{yes:'var(--green-light)',borderline:'#FFD060',no:'#FF8080'}[c.ecprVerdict]||'var(--text)'}">${{yes:'🟢 建議啟動',borderline:'🟡 待評估',no:'🔴 不建議'}[c.ecprVerdict]||'—'}</div></div>
+    <div class="ic"><div class="k">EMT單位</div><div class="v">${c.unit||'—'}</div></div>
+  `;
+
+  // 狀態條
+  const bar = document.getElementById('missionStatusBar');
+  bar.className = '';
+  if (c.ecprActivated) {
+    bar.className = 'msbar-active'; 
+    document.getElementById('missionStatusIcon').textContent = '⚡';
+    document.getElementById('missionStatusTitle').textContent = 'ECPR 已正式啟動';
+    document.getElementById('missionStatusSub').textContent = '確認者：' + (c.ecprBy||'—');
+    document.getElementById('missionActivatorInfo').classList.remove('hidden');
+    document.getElementById('missionActivatorName').textContent = c.ecprBy||'—';
+    document.getElementById('missionActivatorTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+  } else if (c.ecprCancelled) {
+    bar.className = 'msbar-cancel';
+    document.getElementById('missionStatusIcon').textContent = '✋';
+    document.getElementById('missionStatusTitle').textContent = '已評估不啟動 ECPR';
+    document.getElementById('missionStatusSub').textContent = '決策者：' + (c.ecprCancelBy||'—');
+    document.getElementById('missionActivatorInfo').classList.add('hidden');
+  } else {
+    bar.className = 'msbar-alert';
+    document.getElementById('missionStatusIcon').textContent = '⏳';
+    document.getElementById('missionStatusTitle').textContent = '待啟動決策';
+    document.getElementById('missionStatusSub').textContent = 'EMT 通報收到，等待醫師評估';
+    document.getElementById('missionActivatorInfo').classList.add('hidden');
+  }
+
+  // 顯示對應操作區
+  const isDecision = ['np','dr','cvs'].includes(CU.role);
+  const isReceive  = ['or','perf'].includes(CU.role);
+  const isNurse    = CU.role === 'nurse';
+
+  document.getElementById('missionDecisionArea').classList.toggle('hidden', !isDecision);
+  document.getElementById('missionReceiveArea').classList.toggle('hidden', !isReceive);
+  document.getElementById('missionNurseArea').classList.toggle('hidden', !isNurse);
+
+  if (isDecision) renderMissionDecState(c);
+  if (isReceive)  renderMissionRecState(c);
+  if (isNurse)    renderMissionNurseState(c);
+
+  // 任務導覽徽章
+  updateTaskBadge(c);
+}
+
+// ── 決策角色狀態 ─────────────────────────
+function renderMissionDecState(c) {
+  const iAmDecider = (c.ecprBy === CU.displayname) || (c.ecprCancelBy === CU.displayname);
+  ['mdPending','mdIActivated','mdICancelled','mdOtherActivated','mdOtherCancelled']
+    .forEach(id => document.getElementById(id).classList.add('hidden'));
+
+  if (c.ecprActivated) {
+    if (iAmDecider) {
+      document.getElementById('mdIActivated').classList.remove('hidden');
+      document.getElementById('mdIActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+    } else {
+      document.getElementById('mdOtherActivated').classList.remove('hidden');
+      document.getElementById('mdOtherActBy').textContent = (c.ecprBy||'—') + '（' + (c.ecprByRole||'') + '）';
+      document.getElementById('mdOtherActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+      const ack = localStorage.getItem(`ecpr_ack_${c.CaseID}_${CU.username}`);
+      document.getElementById('mdAckActBtn').classList.toggle('hidden', !!ack);
+      document.getElementById('mdAckedAct').classList.toggle('hidden', !ack);
+      if (ack) document.getElementById('mdAckedActTime').textContent = ack;
+    }
+  } else if (c.ecprCancelled) {
+    if (iAmDecider) {
+      document.getElementById('mdICancelled').classList.remove('hidden');
+      document.getElementById('mdICancelTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
+    } else {
+      document.getElementById('mdOtherCancelled').classList.remove('hidden');
+      document.getElementById('mdOtherCancelBy').textContent = c.ecprCancelBy||'—';
+      document.getElementById('mdOtherCancelTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
+      const ack = localStorage.getItem(`ecpr_ack_cancel_${c.CaseID}_${CU.username}`);
+      document.getElementById('mdAckCancelBtn').classList.toggle('hidden', !!ack);
+      document.getElementById('mdAckedCancel').classList.toggle('hidden', !ack);
+      if (ack) document.getElementById('mdAckedCancelTime').textContent = ack;
+    }
+  } else {
+    document.getElementById('mdPending').classList.remove('hidden');
+  }
+}
+
+// ── 接收角色狀態 ─────────────────────────
+function renderMissionRecState(c) {
+  ['mrecWaiting','mrecActivated','mrecCancelled'].forEach(id =>
+    document.getElementById(id).classList.add('hidden'));
+  if (c.ecprActivated) {
+    document.getElementById('mrecActivated').classList.remove('hidden');
+    document.getElementById('mrecActBy').textContent = c.ecprBy||'—';
+    document.getElementById('mrecActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+    const ack = localStorage.getItem(`ecpr_ack_${c.CaseID}_${CU.username}`);
+    document.getElementById('mrecAckBtn').classList.toggle('hidden', !!ack);
+    document.getElementById('mrecAckedMsg').classList.toggle('hidden', !ack);
+    if (ack) document.getElementById('mrecAckedTime').textContent = ack;
+  } else if (c.ecprCancelled) {
+    document.getElementById('mrecCancelled').classList.remove('hidden');
+    document.getElementById('mrecCancelBy').textContent = c.ecprCancelBy||'—';
+    const ack = localStorage.getItem(`ecpr_ack_cancel_${c.CaseID}_${CU.username}`);
+    document.getElementById('mrecAckCancelBtn').classList.toggle('hidden', !!ack);
+    document.getElementById('mrecAckedCancelMsg').classList.toggle('hidden', !ack);
+    if (ack) document.getElementById('mrecAckedCancelTime').textContent = ack;
+  } else {
+    document.getElementById('mrecWaiting').classList.remove('hidden');
+  }
+}
+
+// ── 護理師任務狀態 ───────────────────────
+function renderMissionNurseState(c) {
+  const msKey = 'ecpr_ms_' + c.CaseID;
+  const ms = JSON.parse(localStorage.getItem(msKey)||'{}');
+  ['team','cannula','xray','icu'].forEach(task => {
+    const el = document.querySelector(`[data-task="${task}"]`);
+    if (!el) return;
+    if (ms[task]) {
+      el.classList.add('done');
+      el.querySelector('.mt-status').textContent = '✅ 完成';
+      el.querySelector('.mt-time').textContent = new Date(ms[task]).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+    }
+  });
+  updateNurseTaskProg();
+}
+
+function toggleMissionTask(el) {
+  if (!missionCase) return;
+  const task = el.dataset.task;
+  const msKey = 'ecpr_ms_' + missionCase.CaseID;
+  let ms = JSON.parse(localStorage.getItem(msKey)||'{}');
+  const wasDone = el.classList.contains('done');
+  el.classList.toggle('done', !wasDone);
+  if (!wasDone) {
+    const now = new Date().toISOString();
+    ms[task] = now;
+    el.querySelector('.mt-status').textContent = '✅ 完成';
+    el.querySelector('.mt-time').textContent = new Date(now).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+    api('updateCase', { caseId: missionCase.CaseID, updates: { ['ms_'+task]: now } });
+    toast(`已記錄：${el.querySelector('.mt-title').textContent}`, 'ok');
+  } else {
+    delete ms[task];
+    el.querySelector('.mt-status').textContent = '待完成';
+    el.querySelector('.mt-time').textContent = '';
+  }
+  localStorage.setItem(msKey, JSON.stringify(ms));
+  updateNurseTaskProg();
+}
+
+function updateNurseTaskProg() {
+  const items = document.querySelectorAll('#nurseTaskList .mission-task');
+  const done = document.querySelectorAll('#nurseTaskList .mission-task.done').length;
+  const pct = items.length ? Math.round(done/items.length*100) : 0;
+  document.getElementById('nurseTaskProg').style.width = pct+'%';
+  document.getElementById('nurseTaskProgLbl').textContent = `${done} / ${items.length}`;
+}
+
+function updateTaskBadge(c) {
+  const navMission = document.querySelector('[data-page="pageMission"]');
+  if (!navMission) return;
+  const hasTask = c && (c.ecprActivated || c.status === 'activated');
+  navMission.classList.toggle('has-task', hasTask);
+}
+
+// ── 任務頁 確認收到（對應 specAckActivate 等） ─
+function missionAckActivate() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_${missionCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('mdAckActBtn').classList.add('hidden');
+  document.getElementById('mdAckedAct').classList.remove('hidden');
+  document.getElementById('mdAckedActTime').textContent = timeStr;
+  api('updateCase', { caseId: missionCase.CaseID, updates: { [`ack_${CU.username}`]: timeStr } });
+  toast('已確認收到啟動通知', 'ok');
+}
+
+function missionAckCancel() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_cancel_${missionCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('mdAckCancelBtn').classList.add('hidden');
+  document.getElementById('mdAckedCancel').classList.remove('hidden');
+  document.getElementById('mdAckedCancelTime').textContent = timeStr;
+  toast('已確認收到取消通知', 'ok');
+}
+
+function missionRecAckActivate() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_${missionCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('mrecAckBtn').classList.add('hidden');
+  document.getElementById('mrecAckedMsg').classList.remove('hidden');
+  document.getElementById('mrecAckedTime').textContent = timeStr;
+  api('updateCase', { caseId: missionCase.CaseID, updates: { [`ack_${CU.username}`]: timeStr } });
+  toast('已確認！立即前往', 'ok');
+}
+
+function missionRecAckCancel() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_cancel_${missionCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('mrecAckCancelBtn').classList.add('hidden');
+  document.getElementById('mrecAckedCancelMsg').classList.remove('hidden');
+  document.getElementById('mrecAckedCancelTime').textContent = timeStr;
+  toast('已確認收到取消通知', 'ok');
+}
+
+// ── 任務頁 SDM ─────────────────────────
+function toggleMissionSDM() {
+  missionSDMOpen = !missionSDMOpen;
+  document.getElementById('missionSDMBody').classList.toggle('hidden', !missionSDMOpen);
+  document.getElementById('missionSDMToggle').textContent = missionSDMOpen ? '收合 ▲' : '展開 ▼';
+}
+
+function updateMissionSDMZone() {
+  const lac = parseFloat(document.getElementById('msdmLactate').value);
+  const ph  = parseFloat(document.getElementById('msdmPH').value);
+  const hasL=!isNaN(lac), hasPH=!isNaN(ph);
+  ['mzone-green','mzone-yellow','mzone-red'].forEach(id => {
+    document.getElementById(id)?.classList.remove('highlight');
+    if (document.getElementById(id)) document.getElementById(id).style.boxShadow='';
+  });
+  if (!hasL && !hasPH) { document.getElementById('msdmZoneResult').style.display='none'; return; }
+  let lacL=0, phL=0;
+  if (hasL) { if(lac>11) lacL=2; else if(lac>=6) lacL=1; }
+  if (hasPH) { if(ph<6.9) phL=2; else if(ph<=7.0) phL=1; }
+  const level = Math.max(lacL, phL);
+  const zones=['mzone-green','mzone-yellow','mzone-red'];
+  const colors=['rgba(26,158,92,.7)','rgba(245,166,35,.7)','rgba(217,43,43,.7)'];
+  document.getElementById(zones[level]).classList.add('highlight');
+  document.getElementById(zones[level]).style.boxShadow='0 0 0 2px '+colors[level];
+  const msgs=[
+    {cls:'al-green',icon:'✅',title:'有效區 — 積極說明效益',body:'存活率≥10%，建議積極說明 ECPR 效益。'},
+    {cls:'al-yellow',icon:'⚠️',title:'灰色區 — 告知不確定性',body:'存活率5–10%，誠實說明不確定性，植入善終思考種子。'},
+    {cls:'al-red',icon:'❌',title:'無效區 — 共同決策',body:'存活率<5%，誠實告知預後，與家屬共同決策。'}
+  ];
+  const m=msgs[level];
+  const el=document.getElementById('msdmZoneResult');
+  el.style.display='block';
+  el.innerHTML=`<div class="alert ${m.cls}"><span class="alert-icon">${m.icon}</span><div class="alert-body"><strong>${m.title}</strong><br><span style="font-size:.82rem">${m.body}</span></div></div>`;
+}
+
+async function saveMissionSDM() {
+  if (!missionCase) return;
+  const res = await api('updateCase', {
+    caseId: missionCase.CaseID,
+    updates: { sdmCauses: selectedCauses.join(','), sdmLactate: document.getElementById('msdmLactate').value, sdmPH: document.getElementById('msdmPH').value, sdmNote: document.getElementById('msdmNote').value, sdmBy: CU.username, sdmTime: new Date().toISOString() }
+  });
+  if (res.success) { toast('SDM 評估已儲存', 'ok'); toggleMissionSDM(); }
+  else toast('儲存失敗', 'err');
+}
+
+// specReassess 也需連到 mission page
+const _origSpecReassess = typeof specReassess === 'function' ? specReassess : null;
+function specReassess() {
+  if (missionCase) { missionCase.ecprActivated = false; missionCase.ecprCancelled = false; renderMissionDecState(missionCase); }
+  if (specCurrentCase) { specCurrentCase.ecprActivated = false; specCurrentCase.ecprCancelled = false; }
+}
+
+// specConfirmActivate / specCancelActivate 同步更新 missionCase
+const _origConfirm = specConfirmActivate;
+const _origCancel = specCancelActivate;
+
+// ════════════════════════════════════════
+//  SPECIALIST (NP / DR / CVS / OR / PERF)
+// ════════════════════════════════════════
+const DECISION_ROLES = ['np','dr','cvs'];
+const RECEIVE_ROLES  = ['or','perf'];
+
+let specCurrentCase = null;
+let selectedCauses = [];
+let specPollInterval = null;
+
+// ── 主入口：顯示案件 ───────────────────────
+function updateSpecView(c) {
+  specCurrentCase = c;
+  document.getElementById('specNoCase').classList.add('hidden');
+  document.getElementById('specCase').classList.remove('hidden');
+  document.getElementById('specPollBanner').style.display = 'block';
+
+  // 填入案件資訊
+  document.getElementById('specCaseId').textContent = '案件 ' + (c.CaseID||'—');
+  document.getElementById('specCaseTime').textContent = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW') : '—';
+  document.getElementById('specShock').textContent = c.shock==='yes'?'⚡ 可電擊':c.shock==='no'?'不可電擊':'—';
+  document.getElementById('specCPR').textContent = {ideal:'最佳條件',partial:'部分符合',no:'不符合'}[c.cprCondition]||'—';
+  const vmap={yes:'🟢 建議啟動',borderline:'🟡 待評估',no:'🔴 不建議'};
+  const vcol={yes:'var(--green-light)',borderline:'#FFD060',no:'#FF8080'};
+  const vEl=document.getElementById('specVerdict');
+  vEl.textContent=vmap[c.ecprVerdict]||'—'; vEl.style.color=vcol[c.ecprVerdict]||'var(--text)';
+  document.getElementById('specUnit').textContent=c.unit||'—';
+
+  const isDecision = DECISION_ROLES.includes(CU.role);
+  const isReceive  = RECEIVE_ROLES.includes(CU.role);
+  document.getElementById('decisionBlock').classList.toggle('hidden', !isDecision);
+  document.getElementById('receiveBlock').classList.toggle('hidden', !isReceive);
+
+  if (isDecision) renderDecisionState(c);
+  if (isReceive)  renderReceiveState(c);
+
+  // 啟動輪詢（每8秒重整）
+  startSpecPoll();
+}
+
+// ── 輪詢：自動重整案件狀態 ─────────────────
+function startSpecPoll() {
+  if (specPollInterval) clearInterval(specPollInterval);
+  specPollInterval = setInterval(async () => {
+    if (!specCurrentCase) return;
+    const res = await api('getCases');
+    if (!res.success || !res.cases) return;
+    const updated = res.cases.find(c => c.CaseID === specCurrentCase.CaseID);
+    if (!updated) return;
+    // 只有狀態改變才重繪，避免閃爍
+    const changed = updated.ecprActivated !== specCurrentCase.ecprActivated
+      || updated.ecprCancelled !== specCurrentCase.ecprCancelled;
+    if (changed) {
+      specCurrentCase = updated;
+      if (DECISION_ROLES.includes(CU.role)) renderDecisionState(updated);
+      if (RECEIVE_ROLES.includes(CU.role))  renderReceiveState(updated);
+      if (activeCase) { activeCase.ecprActivated = updated.ecprActivated; activeCase.ecprCancelBy = updated.ecprCancelBy; }
+    }
+  }, 8000);
+}
+
+// ── 決策角色狀態渲染 ───────────────────────
+function renderDecisionState(c) {
+  const iAmDecider = (c.ecprBy === CU.displayname) || (c.ecprCancelBy === CU.displayname);
+  ['decisionPending','decisionIActivated','decisionICancelled','decisionOtherActivated','decisionOtherCancelled']
+    .forEach(id => document.getElementById(id).classList.add('hidden'));
+
+  if (c.ecprActivated) {
+    if (iAmDecider) {
+      document.getElementById('decisionIActivated').classList.remove('hidden');
+      document.getElementById('decIActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+    } else {
+      document.getElementById('decisionOtherActivated').classList.remove('hidden');
+      document.getElementById('decOtherActivatedBy').textContent = (c.ecprBy||'—') + '（' + (c.ecprByRole||'') + '）';
+      document.getElementById('decOtherActivatedTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+      const ackKey = `ecpr_ack_${c.CaseID}_${CU.username}`;
+      const ackTime = localStorage.getItem(ackKey);
+      if (ackTime) {
+        document.getElementById('decAckActivateBtn').classList.add('hidden');
+        document.getElementById('decAckedActivate').classList.remove('hidden');
+        document.getElementById('decAckedActivateTime').textContent = ackTime;
+      } else {
+        document.getElementById('decAckActivateBtn').classList.remove('hidden');
+        document.getElementById('decAckedActivate').classList.add('hidden');
+      }
+    }
+  } else if (c.ecprCancelled) {
+    if (iAmDecider) {
+      document.getElementById('decisionICancelled').classList.remove('hidden');
+      document.getElementById('decICancelTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
+    } else {
+      document.getElementById('decisionOtherCancelled').classList.remove('hidden');
+      document.getElementById('decOtherCancelledBy').textContent = c.ecprCancelBy||'—';
+      document.getElementById('decOtherCancelledTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
+      const ackKey = `ecpr_ack_cancel_${c.CaseID}_${CU.username}`;
+      const ackTime = localStorage.getItem(ackKey);
+      if (ackTime) {
+        document.getElementById('decAckCancelBtn').classList.add('hidden');
+        document.getElementById('decAckedCancel').classList.remove('hidden');
+        document.getElementById('decAckedCancelTime').textContent = ackTime;
+      } else {
+        document.getElementById('decAckCancelBtn').classList.remove('hidden');
+        document.getElementById('decAckedCancel').classList.add('hidden');
+      }
+    }
+  } else {
+    document.getElementById('decisionPending').classList.remove('hidden');
+  }
+}
+
+// ── 接收角色狀態渲染 ───────────────────────
+function renderReceiveState(c) {
+  ['receiveWaiting','receiveActivated','receiveCancelled'].forEach(id =>
+    document.getElementById(id).classList.add('hidden'));
+
+  if (c.ecprActivated) {
+    document.getElementById('receiveActivated').classList.remove('hidden');
+    document.getElementById('recActBy').textContent = c.ecprBy||'—';
+    document.getElementById('recActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
+    const ackKey = `ecpr_ack_${c.CaseID}_${CU.username}`;
+    const ackTime = localStorage.getItem(ackKey);
+    if (ackTime) {
+      document.getElementById('recAckBtn').classList.add('hidden');
+      document.getElementById('recAckedMsg').classList.remove('hidden');
+      document.getElementById('recAckedTime').textContent = ackTime;
+    }
+  } else if (c.ecprCancelled) {
+    document.getElementById('receiveCancelled').classList.remove('hidden');
+    document.getElementById('recCancelBy').textContent = c.ecprCancelBy||'—';
+    const ackKey = `ecpr_ack_cancel_${c.CaseID}_${CU.username}`;
+    const ackTime = localStorage.getItem(ackKey);
+    if (ackTime) {
+      document.getElementById('recAckCancelBtn').classList.add('hidden');
+      document.getElementById('recAckedCancelMsg').classList.remove('hidden');
+      document.getElementById('recAckedCancelTime').textContent = ackTime;
+    }
+  } else {
+    document.getElementById('receiveWaiting').classList.remove('hidden');
+  }
+}
+
+// ── 確認啟動 ───────────────────────────────
+async function specConfirmActivate() {
+  if (!specCurrentCase) return;
+  confirm2('⚡ 確認啟動 ECPR',
+    `由 ${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）正式啟動 ECPR？
+
+其餘醫師將收到通知，OR 與體循師也將同步通知。`,
+    async () => {
+      const now = new Date().toISOString();
+      const res = await api('updateCase', {
+        caseId: specCurrentCase.CaseID,
+        updates: { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status:'activated' }
+      });
+      if (!res.success) { toast('啟動失敗：' + (res.message||''), 'err'); return; }
+
+      specCurrentCase.ecprActivated = true;
+      specCurrentCase.ecprTime = now;
+      specCurrentCase.ecprBy = CU.displayname;
+      specCurrentCase.ecprByRole = ROLES[CU.role]?.label||CU.role;
+      if (activeCase) { activeCase.ecprActivated = true; activeCase.ecprTime = now; }
+
+      // 里程碑
+      const msKey = 'ecpr_ms_' + specCurrentCase.CaseID;
+      let ms = JSON.parse(localStorage.getItem(msKey)||'{}');
+      ms.ecpr = now;
+      localStorage.setItem(msKey, JSON.stringify(ms));
+
+      // 通知記錄
+      const cid = specCurrentCase.CaseID;
+      const nowFmt = new Date(now).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      const msg = `⚠️【ECMO 正式啟動】立即集合！
+🚨【緊急通知：ECMO 正式啟動】請體循環師、手術室護理師立即至急診集合進行裝機。
+🏥 案號：${cid}
+👨‍⚕️ 確認醫師：${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）
+⏰ 啟動時間：${nowFmt}`;
+      saveNotify(msg, cid, 'activated');
+
+      renderDecisionState(specCurrentCase);
+      toast('⚡ ECPR 已啟動，通知已發送', 'ok');
+    }, 'red', '⚡ 確認啟動'
+  );
+}
+
+// ── 取消啟動 ───────────────────────────────
+async function specCancelActivate() {
+  if (!specCurrentCase) return;
+  confirm2('✋ 評估不啟動 ECPR',
+    `由 ${CU.displayname} 評估不啟動 ECPR？`,
+    async () => {
+      const now = new Date().toISOString();
+      await api('updateCase', {
+        caseId: specCurrentCase.CaseID,
+        updates: { ecprCancelled: true, ecprCancelTime: now, ecprCancelBy: CU.displayname, status:'cancelled' }
+      });
+      specCurrentCase.ecprCancelled = true;
+      specCurrentCase.ecprCancelTime = now;
+      specCurrentCase.ecprCancelBy = CU.displayname;
+      const msg = `✋【ECPR 不啟動】
+🏥 案號：${specCurrentCase.CaseID}
+👨‍⚕️ 評估者：${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）
+⏰ 時間：${new Date(now).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+      saveNotify(msg, specCurrentCase.CaseID, 'cancelled');
+      renderDecisionState(specCurrentCase);
+      toast('已記錄：不啟動 ECPR', 'ok');
+    }, 'green', '確認不啟動'
+  );
+}
+
+// ── 確認收到（決策角色 — 他人已決策）────────
+function specAckActivate() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('decAckActivateBtn').classList.add('hidden');
+  document.getElementById('decAckedActivate').classList.remove('hidden');
+  document.getElementById('decAckedActivateTime').textContent = timeStr;
+  api('updateCase', { caseId: specCurrentCase.CaseID, updates: { [`ack_${CU.username}`]: timeStr } });
+  toast('已確認收到啟動通知', 'ok');
+}
+
+function specAckCancel() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_cancel_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('decAckCancelBtn').classList.add('hidden');
+  document.getElementById('decAckedCancel').classList.remove('hidden');
+  document.getElementById('decAckedCancelTime').textContent = timeStr;
+  toast('已確認收到取消通知', 'ok');
+}
+
+// ── 確認收到（接收角色 OR / 體循）─────────
+function recAckActivate() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('recAckBtn').classList.add('hidden');
+  document.getElementById('recAckedMsg').classList.remove('hidden');
+  document.getElementById('recAckedTime').textContent = timeStr;
+  api('updateCase', { caseId: specCurrentCase.CaseID, updates: { [`ack_${CU.username}`]: timeStr } });
+  toast('已確認！立即前往', 'ok');
+}
+
+function recAckCancel() {
+  const timeStr = new Date().toLocaleTimeString('zh-TW');
+  localStorage.setItem(`ecpr_ack_cancel_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
+  document.getElementById('recAckCancelBtn').classList.add('hidden');
+  document.getElementById('recAckedCancelMsg').classList.remove('hidden');
+  document.getElementById('recAckedCancelTime').textContent = timeStr;
+  toast('已確認收到取消通知', 'ok');
+}
+
+function specReassess() {
+  specCurrentCase.ecprActivated = false;
+  specCurrentCase.ecprCancelled = false;
+  renderDecisionState(specCurrentCase);
+}
+
+// ── SDM ─────────────────────────────────────
+function toggleCause(btn) {
+  btn.classList.toggle('selected');
+  const cause = btn.dataset.cause;
+  selectedCauses = btn.classList.contains('selected')
+    ? [...new Set([...selectedCauses, cause])]
+    : selectedCauses.filter(c => c !== cause);
+}
+
+function updateSDMZone() {
+  const lac = parseFloat(document.getElementById('sdmLactate').value);
+  const ph  = parseFloat(document.getElementById('sdmPH').value);
+  const hasL=!isNaN(lac), hasPH=!isNaN(ph);
+  ['zone-green','zone-yellow','zone-red'].forEach(id => {
+    document.getElementById(id).classList.remove('highlight');
+    document.getElementById(id).style.boxShadow='';
+  });
+  if (!hasL && !hasPH) { document.getElementById('sdmZoneResult').style.display='none'; return; }
+  let lacL=0, phL=0;
+  if (hasL) { if(lac>11) lacL=2; else if(lac>=6) lacL=1; }
+  if (hasPH) { if(ph<6.9) phL=2; else if(ph<=7.0) phL=1; }
+  const level = Math.max(lacL, phL);
+  const zones=['zone-green','zone-yellow','zone-red'];
+  const colors=['rgba(26,158,92,.7)','rgba(245,166,35,.7)','rgba(217,43,43,.7)'];
+  document.getElementById(zones[level]).classList.add('highlight');
+  document.getElementById(zones[level]).style.boxShadow='0 0 0 2px '+colors[level];
+  const msgs=[
+    {cls:'al-green',icon:'✅',title:'有效區 — 積極說明效益',body:'Lactate/pH 顯示神經功能預後較佳（存活率≥10%）。建議積極說明 ECPR 效益。'},
+    {cls:'al-yellow',icon:'⚠️',title:'灰色區 — 告知不確定性',body:'預後不確定（存活率5–10%）。啟動同時請誠實說明，植入善終思考種子。'},
+    {cls:'al-red',icon:'❌',title:'無效區 — 共同決策',body:'神經功能預後極差（存活率<5%）。請誠實告知，與家屬共同決策是否繼續或撤管。'}
+  ];
+  const m=msgs[level];
+  const el=document.getElementById('sdmZoneResult');
+  el.style.display='block';
+  el.innerHTML=`<div class="alert ${m.cls}"><span class="alert-icon">${m.icon}</span><div class="alert-body"><strong>${m.title}</strong><br><span style="font-size:.82rem">${m.body}</span></div></div>`;
+}
+
+async function saveSDM() {
+  if (!specCurrentCase) return;
+  const res = await api('updateCase', {
+    caseId: specCurrentCase.CaseID,
+    updates: { sdmCauses: selectedCauses.join(','), sdmLactate: document.getElementById('sdmLactate').value, sdmPH: document.getElementById('sdmPH').value, sdmNote: document.getElementById('sdmNote').value, sdmBy: CU.username, sdmTime: new Date().toISOString() }
+  });
+  if (res.success) toast('SDM 評估已儲存', 'ok');
+  else toast('儲存失敗', 'err');
+}
+
 
 // ════════════════════════════════════════
 //  NURSE
@@ -1369,7 +2714,7 @@ async function loadCases() {
   wrap.innerHTML = '<div class="empty"><div class="ei">⏳</div><p>載入中...</p></div>';
 
   const res = await api('getCases');
-  if (!res.success || !res.cases || res.cases.length === 0) {
+  if (!res.success || !res.cases || !res.cases.length) {
     wrap.innerHTML = '<div class="empty"><div class="ei">📋</div><p>無案件記錄</p></div>';
     return;
   }
@@ -1382,62 +2727,133 @@ async function loadCases() {
     closed:      { lbl:'已結案',   cls:'b-green' }
   };
 
-  const cases = [...res.cases].reverse(); // latest first
-  wrap.innerHTML = cases.map(c => {
+  // 進行中案件置頂
+  const active = res.cases.filter(c => ['pending','active','activated'].includes(c.status));
+  const closed = res.cases.filter(c => !['pending','active','activated'].includes(c.status));
+  const sorted = [...active, ...closed].reverse();
+
+  wrap.innerHTML = sorted.map(c => {
     const st = statusMap[c.status] || { lbl:c.status, cls:'b-blue' };
     const dt = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+    const isAlert   = ['pending','active'].includes(c.status);
+    const isActivated = c.status === 'activated';
+    const isDone    = ['icuTransfer','closed','cancelled'].includes(c.status);
+    const colorCls  = isActivated ? 'cc-active' : isAlert ? 'cc-alert' : isDone ? 'cc-done' : '';
     const encoded = encodeURIComponent(JSON.stringify(c));
-    return `
-      <div class="cc ${['pending','active','activated'].includes(c.status)?'active-case':''}" onclick="viewCase('${encoded}')">
-        <div class="cc-row">
-          <span class="cc-id">${c.CaseID||'?'}</span>
-          <span class="cc-name">${c.ptName||'未知'}</span>
-          <span class="badge ${st.cls}"><span class="dot"></span>${st.lbl}</span>
-          <span class="cc-time">${dt}</span>
-        </div>
-        <div class="cc-sub">${c.patientAge?c.patientAge+'歲':''} ${c.gender||''} ${c.rhythm?'• '+c.rhythm:''}</div>
-      </div>`;
+    const verdictMap = { yes:'🟢 建議啟動', borderline:'🟡 待評估', no:'🔴 不建議' };
+    const verdict = c.ecprVerdict ? `${verdictMap[c.ecprVerdict]||c.ecprVerdict}` : '';
+    const statusDot = isActivated ? '🔴' : isAlert ? '🟠' : isDone ? '🟢' : '';
+    return `<div class="cc ${colorCls}" onclick="viewCase('${encoded}')">
+      <div class="cc-row">
+        <span class="cc-id" style="font-size:.85rem">${c.CaseID||'?'}</span>
+        <span class="cc-name">${statusDot} ${isActivated?'ECPR 啟動中':isAlert?'預警通報中':isDone?'已完成':'—'}</span>
+        <span class="badge ${st.cls}"><span class="dot"></span>${st.lbl}</span>
+        <span class="cc-time">${dt}</span>
+      </div>
+      <div class="cc-sub">${verdict} · EMT: ${c.emtUser||'—'} ${c.shock?'· '+(c.shock==='yes'?'⚡ 可電擊':'不可電擊'):''}</div>
+    </div>`;
   }).join('');
 }
 
 function viewCase(encoded) {
   const c = JSON.parse(decodeURIComponent(encoded));
   prevPage = document.querySelector('.page.active')?.id;
+
+  // 從 localStorage 取里程碑狀態
+  const msKey = 'ecpr_ms_' + c.CaseID;
+  let ms = JSON.parse(localStorage.getItem(msKey) || '{}');
+
+  const milestones = [
+    { key:'emt',     icon:'🚑', label:'EMT 通報',        auto: true,  time: c.reportTime },
+    { key:'ecpr',    icon:'⚡', label:'ECPR 正式啟動',   auto: true,  time: c.ecprTime || null },
+    { key:'team',    icon:'👥', label:'團隊就位',         auto: false, time: ms.team || null },
+    { key:'cannula', icon:'💉', label:'導管放置完成',     auto: false, time: ms.cannula || null },
+    { key:'xray',    icon:'🩻', label:'X光確認導管位置', auto: false, time: ms.xray || null },
+    { key:'icu',     icon:'🏥', label:'轉入 ICU',         auto: false, time: ms.icu || null },
+  ];
+
+  const isActive = ['pending','active','activated'].includes(c.status);
+  const verdictMap = { yes:'🟢 建議啟動', borderline:'🟡 待 NP 評估', no:'🔴 不建議啟動' };
+  const verdictColor = { yes:'var(--green-light)', borderline:'#FFD060', no:'#FF8080' };
+
   document.getElementById('caseDetailContent').innerHTML = `
-    <div class="card">
+    <div class="card" style="${isActive?'border-color:rgba(217,43,43,.3)':''}">
       <div class="card-hd">
         <div class="card-ico" style="background:rgba(217,43,43,.15);color:var(--red)">🫀</div>
-        <div><div class="card-title">${c.ptName||'未知'}</div><div class="card-sub">${c.CaseID||''}</div></div>
+        <div>
+          <div class="card-title">${isActive?'<span style="color:var(--red-light)">● </span>':''}案件 ${c.CaseID||'—'}</div>
+          <div class="card-sub">EMT: ${c.emtUser||'—'} · ${c.reportTime?new Date(c.reportTime).toLocaleString('zh-TW'):'—'}</div>
+        </div>
       </div>
       <div class="info-grid">
-        <div class="ic"><div class="k">年齡</div><div class="v">${c.patientAge||'—'}</div></div>
-        <div class="ic"><div class="k">性別</div><div class="v">${c.gender||'—'}</div></div>
-        <div class="ic"><div class="k">初始心律</div><div class="v">${c.rhythm||'—'}</div></div>
-        <div class="ic"><div class="k">CPR開始</div><div class="v">${c.cprStart||'—'}</div></div>
-        <div class="ic"><div class="k">ROSC</div><div class="v">${c.rosc==='yes'?'有':'無'}</div></div>
-        <div class="ic"><div class="k">ECPR啟動</div><div class="v">${c.ecprActivated?'✅ 是':'—'}</div></div>
+        <div class="ic"><div class="k">AED心律</div><div class="v">${c.shock==='yes'?'⚡ 可電擊':c.shock==='no'?'不可電擊':'—'}</div></div>
+        <div class="ic"><div class="k">CPR狀況</div><div class="v">${{ideal:'最佳條件',partial:'部分符合',no:'不符合'}[c.cprCondition]||'—'}</div></div>
+        <div class="ic"><div class="k">初篩結論</div><div class="v" style="color:${verdictColor[c.ecprVerdict]||'var(--text)'}">${verdictMap[c.ecprVerdict]||'—'}</div></div>
         <div class="ic"><div class="k">狀態</div><div class="v">${c.status||'—'}</div></div>
-        <div class="ic"><div class="k">送出時間</div><div class="v">${c.reportTime?new Date(c.reportTime).toLocaleString('zh-TW'):'—'}</div></div>
       </div>
-      ${c.note?`<hr><div class="text-muted text-sm">${c.note}</div>`:''}
-      <hr>
-      <div class="sec-title">各職類到位</div>
-      <div class="g2">
-        ${['np','cvs','or','perf'].map(r=>{
-          const rr=ROLES[r]; const done=c[`${r}Confirmed`];
-          return `<div style="display:flex;align-items:center;gap:8px;padding:7px;background:var(--bg4);border-radius:6px">
-            <span>${rr.icon}</span><span style="font-size:.82rem;flex:1">${rr.label}</span>
-            <span style="color:${done?'var(--green-light)':'var(--text3)'}">
-              ${done?'✅ 到位':'—'}
-            </span></div>`;
+      ${c.excl_terminal||c.excl_bedridden||c.excl_dementia?`
+        <div class="alert al-red" style="margin-bottom:0">
+          <span class="alert-icon">🚫</span>
+          <div class="alert-body">排除條件：${[c.excl_terminal?'末期病人':'',c.excl_bedridden?'長期臥床':'',c.excl_dementia?'嚴重失智':''].filter(Boolean).join('、')}</div>
+        </div>` : ''}
+    </div>
+
+    <!-- 里程碑時間軸 -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico" style="background:rgba(26,107,181,.15);color:var(--blue-light)">📍</div>
+        <div><div class="card-title">里程碑進度</div></div>
+      </div>
+      <div class="timeline">
+        ${milestones.map((m, i) => {
+          const isDone = !!m.time;
+          const timeStr = m.time ? new Date(m.time).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
+          const isCurrentActive = isActive && !isDone && (i===0 || !!milestones[i-1].time);
+          return `<div class="tl-item">
+            <div class="tl-left">
+              <div class="tl-dot ${isDone?(m.auto?'auto':'done'):isCurrentActive?'active':''}">${isDone?'✓':m.icon}</div>
+              <div class="tl-line ${isDone?'done':''}"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">${m.label} ${m.auto?'<span style="font-size:.65rem;background:rgba(26,107,181,.15);color:#5BA8E8;padding:1px 6px;border-radius:6px;font-weight:700">自動</span>':''}</div>
+              <div class="tl-time">${isDone ? '✅ ' + timeStr : isCurrentActive?'<span style="color:var(--red-light)">● 等待中</span>':'<span style="color:var(--text3)">— 未完成</span>'}</div>
+              ${!m.auto && isActive && !isDone ? `
+                <button class="tl-action" onclick="markMilestone('${c.CaseID}','${m.key}',this)">
+                  ✓ 標記完成
+                </button>` : ''}
+            </div>
+          </div>`;
         }).join('')}
       </div>
     </div>
   `;
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pageCaseDetail').classList.add('active');
 }
 
+function markMilestone(caseId, key, btn) {
+  const msKey = 'ecpr_ms_' + caseId;
+  let ms = JSON.parse(localStorage.getItem(msKey) || '{}');
+  ms[key] = new Date().toISOString();
+  localStorage.setItem(msKey, JSON.stringify(ms));
+  toast(`已記錄：${key}`, 'ok');
+
+  // 同步更新到 Sheets
+  api('updateCase', { caseId, updates: { ['ms_'+key]: ms[key] } });
+
+  // 更新按鈕
+  btn.className = 'tl-action done-btn';
+  btn.textContent = '✅ 已完成';
+  btn.disabled = true;
+
+  // 更新點和時間
+  const tl = btn.closest('.tl-item');
+  tl.querySelector('.tl-dot').className = 'tl-dot done';
+  tl.querySelector('.tl-dot').textContent = '✓';
+  tl.querySelector('.tl-time').innerHTML = '✅ ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  tl.querySelector('.tl-line').classList.add('done');
+}
 function backFromDetail() {
   showPage(prevPage || 'pageTrack');
 }
@@ -1545,7 +2961,7 @@ async function saveSettings() {
 window.addEventListener('DOMContentLoaded', () => {
   const now = new Date();
   const hm = now.toTimeString().slice(0,5);
-  ['eCprStart','eETA','nManualTime'].forEach(id => {
+  ['eETA','nManualTime'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = hm;
   });
