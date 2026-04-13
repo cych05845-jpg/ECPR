@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ECPR 急救啟動系統｜嘉義基督教醫院</title>
+<title>ECPR v4.1 急救啟動系統｜嘉義基督教醫院</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
 
@@ -509,6 +509,7 @@
       <div class="icon">🫀</div>
       <h1>ECPR 急救系統</h1>
       <p>嘉義基督教醫院 急診部</p>
+      <p style="font-size:.65rem;color:var(--text3);margin-top:2px">v4.1 — 2026.04.13</p>
     </div>
 
     <div id="loginFormWrap">
@@ -1366,6 +1367,17 @@ async function api(action, data = {}) {
 }
 
 // ════════════════════════════════════════
+//  CASE HELPERS
+// ════════════════════════════════════════
+// Sheets 的 status 欄位 header 可能是空字串
+function caseStatus(c) {
+  return c.status || c[''] || '';
+}
+function caseAgeGroup(c) {
+  return c.ageGroup || c.patientAge || '';
+}
+
+// ════════════════════════════════════════
 //  TOAST
 // ════════════════════════════════════════
 function toast(msg, type='') {
@@ -1612,7 +1624,8 @@ function doLogout() {
 async function loadActiveCase() {
   const res = await api('getCases');
   if (!res.success || !res.cases) return;
-  const c = res.cases.find(c => ['pending','active','activated'].includes(c.status));
+  const c = res.cases.find(c => ['pending','active','activated'].includes(caseStatus(c)))
+    || res.cases.find(c => caseStatus(c) === '' && c.CaseID);
   if (c) {
     setActiveCase(c);
     // 同步到任務頁
@@ -1863,15 +1876,42 @@ let missionSDMOpen = false;
 
 async function loadMission() {
   const res = await api('getCases');
-  if (!res.success || !res.cases) return;
-  // 找進行中案件（優先啟動中）
-  const active = res.cases.find(c => c.status === 'activated')
-    || res.cases.find(c => ['pending','active','cancelled'].includes(c.status));
-  if (!active) {
+
+  // 除錯：顯示原始資料
+  console.log('[loadMission] getCases res:', res);
+
+  if (!res.success || !res.cases) {
+    console.log('[loadMission] 無資料或失敗', res);
     document.getElementById('missionNoCase').classList.remove('hidden');
     document.getElementById('missionCase').classList.add('hidden');
     return;
   }
+
+  console.log('[loadMission] 案件數:', res.cases.length);
+  res.cases.forEach((c, i) => {
+    console.log(`[loadMission] 案件[${i}]:`, JSON.stringify(c));
+  });
+
+  // 放寬條件：任何有 CaseID 的案件都算
+  // 優先找非結案的，其次找最新一筆
+  const DONE = ['closed', 'icuTransfer'];
+  // caseStatus() 處理 status 欄位名稱為空字串的情況
+  let active = res.cases.find(c => caseStatus(c) === 'activated')
+    || res.cases.find(c => caseStatus(c) === 'pending')
+    || res.cases.find(c => caseStatus(c) === 'active')
+    || res.cases.find(c => c.CaseID && !DONE.includes(caseStatus(c)))
+    || (res.cases.length > 0 ? res.cases[res.cases.length - 1] : null);
+
+  console.log('[loadMission] 選中案件:', active);
+
+  if (!active || !active.CaseID) {
+    document.getElementById('missionNoCase').classList.remove('hidden');
+    document.getElementById('missionCase').classList.add('hidden');
+    return;
+  }
+
+  document.getElementById('missionNoCase').classList.add('hidden');
+  document.getElementById('missionCase').classList.remove('hidden');
   missionCase = active;
   renderMission(active);
   startMissionPoll();
@@ -1886,7 +1926,8 @@ function startMissionPoll() {
     const updated = res.cases.find(c => c.CaseID === missionCase.CaseID);
     if (!updated) return;
     const changed = updated.ecprActivated !== missionCase.ecprActivated
-      || updated.ecprCancelled !== missionCase.ecprCancelled;
+      || updated.ecprCancelled !== missionCase.ecprCancelled
+      || caseStatus(updated) !== caseStatus(missionCase);
     if (changed) { missionCase = updated; renderMission(updated); }
   }, 8000);
 }
@@ -2724,20 +2765,22 @@ async function loadCases() {
     active:      { lbl:'進行中',   cls:'b-red' },
     activated:   { lbl:'ECPR啟動', cls:'b-orange' },
     icuTransfer: { lbl:'已轉ICU',  cls:'b-blue' },
-    closed:      { lbl:'已結案',   cls:'b-green' }
+    closed:      { lbl:'已結案',   cls:'b-green' },
+    '':          { lbl:'通報中',   cls:'b-yellow' }
   };
 
-  // 進行中案件置頂
-  const active = res.cases.filter(c => ['pending','active','activated'].includes(c.status));
-  const closed = res.cases.filter(c => !['pending','active','activated'].includes(c.status));
+  // 進行中案件置頂（用 caseStatus() 處理空字串欄位）
+  const active = res.cases.filter(c => ['pending','active','activated'].includes(caseStatus(c)));
+  const closed = res.cases.filter(c => !['pending','active','activated'].includes(caseStatus(c)));
   const sorted = [...active, ...closed].reverse();
 
   wrap.innerHTML = sorted.map(c => {
-    const st = statusMap[c.status] || { lbl:c.status, cls:'b-blue' };
+    const st = statusMap[st_val] || { lbl:st_val||'通報中', cls:'b-yellow' };
     const dt = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
-    const isAlert   = ['pending','active'].includes(c.status);
-    const isActivated = c.status === 'activated';
-    const isDone    = ['icuTransfer','closed','cancelled'].includes(c.status);
+    const st_val = caseStatus(c);
+    const isAlert   = ['pending','active',''].includes(st_val);
+    const isActivated = st_val === 'activated';
+    const isDone    = ['icuTransfer','closed','cancelled'].includes(st_val);
     const colorCls  = isActivated ? 'cc-active' : isAlert ? 'cc-alert' : isDone ? 'cc-done' : '';
     const encoded = encodeURIComponent(JSON.stringify(c));
     const verdictMap = { yes:'🟢 建議啟動', borderline:'🟡 待評估', no:'🔴 不建議' };
