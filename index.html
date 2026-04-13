@@ -2419,9 +2419,7 @@ async function specConfirmActivate() {
   if (!theCase) { toast('無進行中案件', 'err'); return; }
 
   confirm2('⚡ 確認啟動 ECPR',
-    `由 ${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）正式啟動 ECPR？
-
-其餘醫師將收到通知，OR 與體循師也將同步通知。`,
+    `由 ${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）正式啟動 ECPR？ 其餘醫師將收到通知，OR 與體循師也將同步通知。`,
     async () => {
       const now = new Date().toISOString();
       const res = await api('updateCase', {
