@@ -2434,7 +2434,12 @@ async function specConfirmActivate() {
       const now = new Date().toISOString();
       const res = await api('updateCase', {
         caseId: theCase.CaseID,
-        updates: { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status:'activated' }
+        updates: {
+          ecprActivated: true, ecprTime: now,
+          ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role,
+          status: 'activated',
+          '': 'activated'   // Sheets 的 status 欄位標題是空字串
+        }
       });
       if (!res.success) {
         toast('啟動失敗：' + (res.message||''), 'err');
@@ -2445,7 +2450,7 @@ async function specConfirmActivate() {
       }
       if (missionPollInterval) { clearInterval(missionPollInterval); missionPollInterval = null; }
       // 直接更新全域變數（用 theCase 為主）
-      const _upd = { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status: 'activated' };
+      const _upd = { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status: 'activated', '': 'activated' };
       Object.assign(theCase, _upd);
       if (missionCase) Object.assign(missionCase, _upd);
       if (specCurrentCase) Object.assign(specCurrentCase, _upd);
@@ -2485,7 +2490,12 @@ async function specCancelActivate() {
       const now = new Date().toISOString();
       await api('updateCase', {
         caseId: theCase.CaseID,
-        updates: { ecprCancelled: true, ecprCancelTime: now, ecprCancelBy: CU.displayname, status:'cancelled' }
+        updates: {
+          ecprCancelled: true, ecprCancelTime: now,
+          ecprCancelBy: CU.displayname,
+          status: 'cancelled',
+          '': 'cancelled'
+        }
       });
       [missionCase, specCurrentCase].forEach(c => {
         if (c && c.CaseID === theCase.CaseID) {
