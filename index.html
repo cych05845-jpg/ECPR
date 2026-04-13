@@ -772,11 +772,9 @@ let prevPage = null;
 // ════════════════════════════════════════
 async function api(action, data = {}) {
   try {
-    const r = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, ...data })
-    });
+    // GET + payload 方式，完全避開 CORS preflight 問題
+    const payload = encodeURIComponent(JSON.stringify({ action, ...data }));
+    const r = await fetch(`${API}?payload=${payload}`);
     return await r.json();
   } catch(e) {
     return { success: false, message: e.message };
