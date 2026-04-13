@@ -2207,7 +2207,7 @@ function toggleMissionTask(el) {
     ms[task] = now;
     el.querySelector('.mt-status').textContent = '✅ 完成';
     const timeStr = new Date(now).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
-    el.querySelector('.mt-time').textContent = `${timeStr}　${CU.displayname}`;
+    el.querySelector('.mt-time').textContent = timeStr + '  ' + CU.displayname;
     api('updateCase', { caseId: missionCase.CaseID, updates: { ['ms_'+task]: now, ['ms_'+task+'_by']: CU.displayname } });
     toast(`已記錄：${el.querySelector('.mt-title').textContent}`, 'ok');
 
@@ -2231,13 +2231,13 @@ function generateECPRRecord(c, ms) {
   lines.push(`案件編號：${c.CaseID || '—'}`);
   lines.push('');
 
-  if (c.reportTime)  lines.push(`${fmt(c.reportTime)}　預警啟動（EMT 通報）`);
-  if (c.ecprTime)    lines.push(`${fmt(c.ecprTime)}　正式啟動：由 ${c.ecprBy || '醫師'} 確認啟動`);
-  else if (caseStatus(c) === 'activated') lines.push(`—　正式啟動（時間未記錄）`);
-  if (ms.team)       lines.push(`${fmt(ms.team)}　團隊就位`);
-  if (ms.cannula)    lines.push(`${fmt(ms.cannula)}　完成導管放置`);
-  if (ms.xray)       lines.push(`${fmt(ms.xray)}　已照完 X 光確認導管位置`);
-  if (ms.icu)        lines.push(`${fmt(ms.icu)}　轉入 ICU`);
+  if (c.reportTime)  lines.push(`${fmt(c.reportTime)}  預警啟動（EMT 通報）`);
+  if (c.ecprTime)    lines.push(`${fmt(c.ecprTime)}  正式啟動：由 ${c.ecprBy || '醫師'} 確認啟動`);
+  else if (caseStatus(c) === 'activated') lines.push(`—  正式啟動（時間未記錄）`);
+  if (ms.team)       lines.push(`${fmt(ms.team)}  團隊就位`);
+  if (ms.cannula)    lines.push(`${fmt(ms.cannula)}  完成導管放置`);
+  if (ms.xray)       lines.push(`${fmt(ms.xray)}  已照完 X 光確認導管位置`);
+  if (ms.icu)        lines.push(fmt(ms.icu) + '  轉入 ICU');
   lines.push('');
   // 記錄者：從 ICU 那項的 mt-time 旁的勾選者，或當前登入者
   const icuEl = document.querySelector('[data-task="icu"]');
@@ -2246,8 +2246,7 @@ function generateECPRRecord(c, ms) {
   lines.push(`記錄者：${recorder}`);
   lines.push(`產生時間：${new Date().toLocaleString('zh-TW')}`);
 
-  const record = lines.join('
-');
+  const record = lines.join('\n');
 
   // 存到 Sheets
   api('updateCase', { caseId: c.CaseID, updates: { ecprRecord: record } });
@@ -2411,18 +2410,7 @@ async function saveMissionSDM() {
 
 // specReassess 也需連到 mission page
 const _origSpecReassess = typeof specReassess === 'function' ? specReassess : null;
-function specReassess() {
-  const theCase = missionCase || specCurrentCase;
-  if (!theCase) return;
-  if (missionCase && missionCase.CaseID === theCase.CaseID) {
-    missionCase.ecprActivated = false; missionCase.ecprCancelled = false;
-    renderMission(missionCase);
-  }
-  if (specCurrentCase && specCurrentCase.CaseID === theCase.CaseID) {
-    specCurrentCase.ecprActivated = false; specCurrentCase.ecprCancelled = false;
-    renderDecisionState(specCurrentCase);
-  }
-}
+
 
 // specConfirmActivate / specCancelActivate 同步更新 missionCase
 const _origConfirm = specConfirmActivate;
@@ -2439,349 +2427,6 @@ let selectedCauses = [];
 let specPollInterval = null;
 
 // ── 主入口：顯示案件 ───────────────────────
-function updateSpecView(c) {
-  specCurrentCase = c;
-  document.getElementById('specNoCase').classList.add('hidden');
-  document.getElementById('specCase').classList.remove('hidden');
-  document.getElementById('specPollBanner').style.display = 'block';
-
-  // 填入案件資訊
-  document.getElementById('specCaseId').textContent = '案件 ' + (c.CaseID||'—');
-  document.getElementById('specCaseTime').textContent = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW') : '—';
-  document.getElementById('specShock').textContent = c.shock==='yes'?'⚡ 可電擊':c.shock==='no'?'不可電擊':'—';
-  document.getElementById('specCPR').textContent = {ideal:'最佳條件',partial:'部分符合',no:'不符合'}[c.cprCondition]||'—';
-  const vmap={yes:'🟢 建議啟動',borderline:'🟡 待評估',no:'🔴 不建議'};
-  const vcol={yes:'var(--green-light)',borderline:'#FFD060',no:'#FF8080'};
-  const vEl=document.getElementById('specVerdict');
-  vEl.textContent=vmap[c.ecprVerdict]||'—'; vEl.style.color=vcol[c.ecprVerdict]||'var(--text)';
-  document.getElementById('specUnit').textContent=c.unit||'—';
-
-  const isDecision = DECISION_ROLES.includes(CU.role);
-  const isReceive  = RECEIVE_ROLES.includes(CU.role);
-  document.getElementById('decisionBlock').classList.toggle('hidden', !isDecision);
-  document.getElementById('receiveBlock').classList.toggle('hidden', !isReceive);
-
-  if (isDecision) renderDecisionState(c);
-  if (isReceive)  renderReceiveState(c);
-
-  // 啟動輪詢（每8秒重整）
-  startSpecPoll();
-}
-
-// ── 輪詢：自動重整案件狀態 ─────────────────
-function startSpecPoll() {
-  if (specPollInterval) clearInterval(specPollInterval);
-  specPollInterval = setInterval(async () => {
-    if (!specCurrentCase) return;
-    const res = await api('getCases');
-    if (!res.success || !res.cases) return;
-    const updated = res.cases.find(c => c.CaseID === specCurrentCase.CaseID);
-    if (!updated) return;
-    // 只有狀態改變才重繪，避免閃爍
-    const changed = updated.ecprActivated !== specCurrentCase.ecprActivated
-      || updated.ecprCancelled !== specCurrentCase.ecprCancelled;
-    if (changed) {
-      specCurrentCase = updated;
-      if (DECISION_ROLES.includes(CU.role)) renderDecisionState(updated);
-      if (RECEIVE_ROLES.includes(CU.role))  renderReceiveState(updated);
-      if (activeCase) { activeCase.ecprActivated = updated.ecprActivated; activeCase.ecprCancelBy = updated.ecprCancelBy; }
-    }
-  }, 8000);
-}
-
-// ── 決策角色狀態渲染 ───────────────────────
-function renderDecisionState(c) {
-  const iAmDecider = (c.ecprBy === CU.displayname) || (c.ecprCancelBy === CU.displayname);
-  ['decisionPending','decisionIActivated','decisionICancelled','decisionOtherActivated','decisionOtherCancelled']
-    .forEach(id => document.getElementById(id).classList.add('hidden'));
-
-  if (c.ecprActivated) {
-    if (iAmDecider) {
-      document.getElementById('decisionIActivated').classList.remove('hidden');
-      document.getElementById('decIActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
-    } else {
-      document.getElementById('decisionOtherActivated').classList.remove('hidden');
-      document.getElementById('decOtherActivatedBy').textContent = (c.ecprBy||'—') + '（' + (c.ecprByRole||'') + '）';
-      document.getElementById('decOtherActivatedTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
-      const ackKey = `ecpr_ack_${c.CaseID}_${CU.username}`;
-      const ackTime = localStorage.getItem(ackKey);
-      if (ackTime) {
-        document.getElementById('decAckActivateBtn').classList.add('hidden');
-        document.getElementById('decAckedActivate').classList.remove('hidden');
-        document.getElementById('decAckedActivateTime').textContent = ackTime;
-      } else {
-        document.getElementById('decAckActivateBtn').classList.remove('hidden');
-        document.getElementById('decAckedActivate').classList.add('hidden');
-      }
-    }
-  } else if (c.ecprCancelled) {
-    if (iAmDecider) {
-      document.getElementById('decisionICancelled').classList.remove('hidden');
-      document.getElementById('decICancelTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
-    } else {
-      document.getElementById('decisionOtherCancelled').classList.remove('hidden');
-      document.getElementById('decOtherCancelledBy').textContent = c.ecprCancelBy||'—';
-      document.getElementById('decOtherCancelledTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
-      const ackKey = `ecpr_ack_cancel_${c.CaseID}_${CU.username}`;
-      const ackTime = localStorage.getItem(ackKey);
-      if (ackTime) {
-        document.getElementById('decAckCancelBtn').classList.add('hidden');
-        document.getElementById('decAckedCancel').classList.remove('hidden');
-        document.getElementById('decAckedCancelTime').textContent = ackTime;
-      } else {
-        document.getElementById('decAckCancelBtn').classList.remove('hidden');
-        document.getElementById('decAckedCancel').classList.add('hidden');
-      }
-    }
-  } else {
-    document.getElementById('decisionPending').classList.remove('hidden');
-  }
-}
-
-// ── 接收角色狀態渲染 ───────────────────────
-function renderReceiveState(c) {
-  ['receiveWaiting','receiveActivated','receiveCancelled'].forEach(id =>
-    document.getElementById(id).classList.add('hidden'));
-
-  if (c.ecprActivated) {
-    document.getElementById('receiveActivated').classList.remove('hidden');
-    document.getElementById('recActBy').textContent = c.ecprBy||'—';
-    document.getElementById('recActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
-    const ackKey = `ecpr_ack_${c.CaseID}_${CU.username}`;
-    const ackTime = localStorage.getItem(ackKey);
-    if (ackTime) {
-      document.getElementById('recAckBtn').classList.add('hidden');
-      document.getElementById('recAckedMsg').classList.remove('hidden');
-      document.getElementById('recAckedTime').textContent = ackTime;
-    }
-  } else if (c.ecprCancelled) {
-    document.getElementById('receiveCancelled').classList.remove('hidden');
-    document.getElementById('recCancelBy').textContent = c.ecprCancelBy||'—';
-    const ackKey = `ecpr_ack_cancel_${c.CaseID}_${CU.username}`;
-    const ackTime = localStorage.getItem(ackKey);
-    if (ackTime) {
-      document.getElementById('recAckCancelBtn').classList.add('hidden');
-      document.getElementById('recAckedCancelMsg').classList.remove('hidden');
-      document.getElementById('recAckedCancelTime').textContent = ackTime;
-    }
-  } else {
-    document.getElementById('receiveWaiting').classList.remove('hidden');
-  }
-}
-
-// ── 確認啟動 ───────────────────────────────
-async function specConfirmActivate() {
-  // 任務頁用 missionCase，專師頁用 specCurrentCase
-  const theCase = missionCase || specCurrentCase;
-  if (!theCase) { toast('無進行中案件', 'err'); return; }
-
-  confirm2('⚡ 確認啟動 ECPR',
-    `由 ${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）正式啟動 ECPR？ 其餘醫師將收到通知，OR 與體循師也將同步通知。`,
-    async () => {
-      const now = new Date().toISOString();
-      const res = await api('updateCase', {
-        caseId: theCase.CaseID,
-        updates: { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status:'activated' }
-      });
-      if (!res.success) { toast('啟動失敗：' + (res.message||''), 'err'); return; }
-
-      // 立即 disable 啟動按鈕，防止重複點擊
-      document.querySelectorAll('.act-btn-confirm, .act-btn-cancel').forEach(b => {
-        b.disabled = true;
-        b.style.opacity = '0.4';
-        b.style.cursor = 'not-allowed';
-      });
-
-      // 停止輪詢避免覆蓋剛更新的狀態
-      if (missionPollInterval) { clearInterval(missionPollInterval); missionPollInterval = null; }
-
-      // 更新所有 case 物件
-      [missionCase, specCurrentCase, activeCase].forEach(c => {
-        if (c && c.CaseID === theCase.CaseID) {
-          c.ecprActivated = true;
-          c.ecprTime = now;
-          c.ecprBy = CU.displayname;
-          c.ecprByRole = ROLES[CU.role]?.label||CU.role;
-          c.status = 'activated';
-          c[''] = 'activated';  // 相容舊欄位
-        }
-      });
-
-      // 里程碑
-      const msKey = 'ecpr_ms_' + theCase.CaseID;
-      let ms = JSON.parse(localStorage.getItem(msKey)||'{}');
-      ms.ecpr = now;
-      localStorage.setItem(msKey, JSON.stringify(ms));
-
-      // 通知記錄
-      const cid = theCase.CaseID;
-      const nowFmt = new Date(now).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-      const shock = theCase.shock === 'yes' ? '⚡ 可電擊' : theCase.shock === 'no' ? '不可電擊' : '—';
-      const cprCond = {ideal:'最佳條件（<30分+目擊+Bystander）', partial:'有持續CPR', no:'CPR>60分或無CPR'}[theCase.cprCondition] || '—';
-      const msg = `⚠️【ECMO 正式啟動】立即集合！
-🚨【緊急通知：ECMO 正式啟動】請體循環師、手術室護理師立即至急診集合進行裝機。
-🏥 案號：${cid}
-🫀 AED心律：${shock}
-💊 CPR狀況：${cprCond}
-👨‍⚕️ 確認醫師：${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）
-⏰ 啟動時間：${nowFmt}
-
-請至任務頁確認收到。`;
-      saveNotify(msg, cid, 'activated');
-
-      // 立即更新 UI
-      if (missionCase) renderMission(missionCase);
-      if (specCurrentCase) renderDecisionState(specCurrentCase);
-
-      // 顯示正式啟動通知並跳任務頁
-      showActivateModal(msg, cid);
-
-      // 3秒後重啟輪詢（讓 Sheets 有時間寫入）
-      setTimeout(() => startMissionPoll(), 3000);
-    }, 'red', '⚡ 確認啟動'
-  );
-}
-
-// ── 取消啟動 ───────────────────────────────
-function showActivateModal(msg, caseId) {
-  // 顯示正式啟動通知彈窗
-  document.getElementById('mTitle').textContent = '⚡ ECPR 正式啟動通知';
-  document.getElementById('mMsg').innerHTML =
-    '<div style="background:rgba(217,43,43,.1);border:1px solid rgba(217,43,43,.3);border-radius:8px;padding:12px;font-family:JetBrains Mono,monospace;font-size:.82rem;line-height:1.8;color:#FFAAAA;white-space:pre-wrap">' +
-    msg + '</div>';
-  const btn = document.getElementById('mOkBtn');
-  btn.textContent = '📋 前往任務頁確認';
-  btn.className = 'btn-mok';
-  btn.style.background = 'var(--red)';
-  document.getElementById('confirmModal').classList.add('active');
-  // 按確認跳任務頁
-  modalCb = () => showPage('pageMission', document.querySelector('[data-page="pageMission"]'));
-}
-
-async function specCancelActivate() {
-  const theCase = missionCase || specCurrentCase;
-  if (!theCase) { toast('無進行中案件', 'err'); return; }
-
-  confirm2('✋ 評估不啟動 ECPR',
-    `由 ${CU.displayname} 評估不啟動 ECPR？`,
-    async () => {
-      const now = new Date().toISOString();
-      await api('updateCase', {
-        caseId: theCase.CaseID,
-        updates: { ecprCancelled: true, ecprCancelTime: now, ecprCancelBy: CU.displayname, status:'cancelled' }
-      });
-      [missionCase, specCurrentCase].forEach(c => {
-        if (c && c.CaseID === theCase.CaseID) {
-          c.ecprCancelled = true;
-          c.ecprCancelTime = now;
-          c.ecprCancelBy = CU.displayname;
-        }
-      });
-      const msg = `✋【ECPR 不啟動】
-🏥 案號：${theCase.CaseID}
-👨‍⚕️ 評估者：${CU.displayname}（${ROLES[CU.role]?.label||CU.role}）
-⏰ 時間：${new Date(now).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}`;
-      saveNotify(msg, theCase.CaseID, 'cancelled');
-      if (missionCase) renderMission(missionCase);
-      if (specCurrentCase) renderDecisionState(specCurrentCase);
-      toast('已記錄：不啟動 ECPR', 'ok');
-    }, 'green', '確認不啟動'
-  );
-}
-
-// ── 確認收到（決策角色 — 他人已決策）────────
-function specAckActivate() {
-  const timeStr = new Date().toLocaleTimeString('zh-TW');
-  localStorage.setItem(`ecpr_ack_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
-  document.getElementById('decAckActivateBtn').classList.add('hidden');
-  document.getElementById('decAckedActivate').classList.remove('hidden');
-  document.getElementById('decAckedActivateTime').textContent = timeStr;
-  api('updateCase', { caseId: specCurrentCase.CaseID, updates: { [`ack_${CU.username}`]: timeStr } });
-  toast('已確認收到啟動通知', 'ok');
-}
-
-function specAckCancel() {
-  const timeStr = new Date().toLocaleTimeString('zh-TW');
-  localStorage.setItem(`ecpr_ack_cancel_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
-  document.getElementById('decAckCancelBtn').classList.add('hidden');
-  document.getElementById('decAckedCancel').classList.remove('hidden');
-  document.getElementById('decAckedCancelTime').textContent = timeStr;
-  toast('已確認收到取消通知', 'ok');
-}
-
-// ── 確認收到（接收角色 OR / 體循）─────────
-function recAckActivate() {
-  const timeStr = new Date().toLocaleTimeString('zh-TW');
-  localStorage.setItem(`ecpr_ack_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
-  document.getElementById('recAckBtn').classList.add('hidden');
-  document.getElementById('recAckedMsg').classList.remove('hidden');
-  document.getElementById('recAckedTime').textContent = timeStr;
-  api('updateCase', { caseId: specCurrentCase.CaseID, updates: { [`ack_${CU.username}`]: timeStr } });
-  toast('已確認！立即前往', 'ok');
-}
-
-function recAckCancel() {
-  const timeStr = new Date().toLocaleTimeString('zh-TW');
-  localStorage.setItem(`ecpr_ack_cancel_${specCurrentCase.CaseID}_${CU.username}`, timeStr);
-  document.getElementById('recAckCancelBtn').classList.add('hidden');
-  document.getElementById('recAckedCancelMsg').classList.remove('hidden');
-  document.getElementById('recAckedCancelTime').textContent = timeStr;
-  toast('已確認收到取消通知', 'ok');
-}
-
-function specReassess() {
-  specCurrentCase.ecprActivated = false;
-  specCurrentCase.ecprCancelled = false;
-  renderDecisionState(specCurrentCase);
-}
-
-// ── SDM ─────────────────────────────────────
-function toggleCause(btn) {
-  btn.classList.toggle('selected');
-  const cause = btn.dataset.cause;
-  selectedCauses = btn.classList.contains('selected')
-    ? [...new Set([...selectedCauses, cause])]
-    : selectedCauses.filter(c => c !== cause);
-}
-
-function updateSDMZone() {
-  const lac = parseFloat(document.getElementById('sdmLactate').value);
-  const ph  = parseFloat(document.getElementById('sdmPH').value);
-  const hasL=!isNaN(lac), hasPH=!isNaN(ph);
-  ['zone-green','zone-yellow','zone-red'].forEach(id => {
-    document.getElementById(id).classList.remove('highlight');
-    document.getElementById(id).style.boxShadow='';
-  });
-  if (!hasL && !hasPH) { document.getElementById('sdmZoneResult').style.display='none'; return; }
-  let lacL=0, phL=0;
-  if (hasL) { if(lac>11) lacL=2; else if(lac>=6) lacL=1; }
-  if (hasPH) { if(ph<6.9) phL=2; else if(ph<=7.0) phL=1; }
-  const level = Math.max(lacL, phL);
-  const zones=['zone-green','zone-yellow','zone-red'];
-  const colors=['rgba(26,158,92,.7)','rgba(245,166,35,.7)','rgba(217,43,43,.7)'];
-  document.getElementById(zones[level]).classList.add('highlight');
-  document.getElementById(zones[level]).style.boxShadow='0 0 0 2px '+colors[level];
-  const msgs=[
-    {cls:'al-green',icon:'✅',title:'有效區 — 積極說明效益',body:'Lactate/pH 顯示神經功能預後較佳（存活率≥10%）。建議積極說明 ECPR 效益。'},
-    {cls:'al-yellow',icon:'⚠️',title:'灰色區 — 告知不確定性',body:'預後不確定（存活率5–10%）。啟動同時請誠實說明，植入善終思考種子。'},
-    {cls:'al-red',icon:'❌',title:'無效區 — 共同決策',body:'神經功能預後極差（存活率<5%）。請誠實告知，與家屬共同決策是否繼續或撤管。'}
-  ];
-  const m=msgs[level];
-  const el=document.getElementById('sdmZoneResult');
-  el.style.display='block';
-  el.innerHTML=`<div class="alert ${m.cls}"><span class="alert-icon">${m.icon}</span><div class="alert-body"><strong>${m.title}</strong><br><span style="font-size:.82rem">${m.body}</span></div></div>`;
-}
-
-async function saveSDM() {
-  if (!specCurrentCase) return;
-  const res = await api('updateCase', {
-    caseId: specCurrentCase.CaseID,
-    updates: { sdmCauses: selectedCauses.join(','), sdmLactate: document.getElementById('sdmLactate').value, sdmPH: document.getElementById('sdmPH').value, sdmNote: document.getElementById('sdmNote').value, sdmBy: CU.username, sdmTime: new Date().toISOString() }
-  });
-  if (res.success) toast('SDM 評估已儲存', 'ok');
-  else toast('儲存失敗', 'err');
-}
-
 
 // ════════════════════════════════════════
 //  NURSE
@@ -3010,27 +2655,24 @@ function updateTrackSummary(c) {
         ${['np','dr','cvs','or','perf','nurse'].map(r => {
           const rr = ROLES[r];
           if (!rr) return '';
-          // 任一人按確認即視為到位
-          const ackKey = Object.keys(c).find(k => k.startsWith('ack_') && c[k]);
-          // NP/DR：確認啟動者視為到位
+          const msKey2 = 'ecpr_ms_' + c.CaseID;
+          const ms2 = JSON.parse(localStorage.getItem(msKey2)||'{}');
           let done = false;
           if (r === 'np' || r === 'dr') {
-            done = c.ecprBy && (c.ecprByRole === rr.label || ROLES[c.ecprByRole?.toLowerCase()]?.label === rr.label);
+            done = !!(c.ecprBy);
           } else if (r === 'nurse') {
-            // 護理師：ICU那項勾了就算
-            const msKey2 = 'ecpr_ms_' + c.CaseID;
-            const ms2 = JSON.parse(localStorage.getItem(msKey2)||'{}');
             done = !!ms2.icu || !!c.ms_icu;
           } else {
-            done = !!c[\`ack_\${r}\`] || Object.keys(c).some(k => k.startsWith('ack_') && c[k] && k.includes(r));
+            done = !!(c['ack_'+r]);
           }
-          return \`<div style="display:flex;align-items:center;gap:8px;padding:7px;background:var(--bg4);border-radius:6px;border:1px solid \${done?'rgba(26,158,92,.3)':'var(--border)'}">
-            <span>\${rr.icon}</span>
-            <span style="font-size:.82rem;flex:1">\${rr.label}</span>
-            <span style="font-size:.8rem;color:\${done?'var(--green-light)':'var(--text3)'}">\${done?'✅ 已到位':'—'}</span>
-          </div>\`;
-        }).join('')}
-      </div>
+          const bCol = done ? 'rgba(26,158,92,.3)' : 'var(--border)';
+          const tCol = done ? 'var(--green-light)' : 'var(--text3)';
+          return '<div style="display:flex;align-items:center;gap:8px;padding:7px;background:var(--bg4);border-radius:6px;border:1px solid ' + bCol + '">'
+            + '<span>' + rr.icon + '</span>'
+            + '<span style="font-size:.82rem;flex:1">' + rr.label + '</span>'
+            + '<span style="font-size:.8rem;color:' + tCol + '">' + (done?'✅ 已到位':'—') + '</span>'
+            + '</div>';
+        }).join('')}      </div>
     </div>
   `;
 
