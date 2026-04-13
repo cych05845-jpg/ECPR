@@ -1787,11 +1787,22 @@ function saveNotify(msg, caseId, verdict) {
     id: Date.now(),
     caseId, verdict, msg,
     time: new Date().toISOString(),
-    type: 'emt_alert'
+    type: verdict === 'activated' ? 'activate' : 'emt_alert'
   };
   notifyLog.unshift(entry);
   if (notifyLog.length > 50) notifyLog = notifyLog.slice(0,50);
   localStorage.setItem('ecpr_notify_log', JSON.stringify(notifyLog));
+
+  // 同步存到 Sheets（讓其他裝置也能讀到）
+  if (caseId) {
+    const notifyData = JSON.stringify({ msg, verdict, time: entry.time, by: CU?.displayname||'' });
+    api('updateCase', { caseId, updates: {
+      [`notify_${entry.id}`]: notifyData,
+      lastNotifyMsg: msg,
+      lastNotifyType: verdict,
+      lastNotifyTime: entry.time
+    }});
+  }
 }
 
 async function submitEMT() {
@@ -1856,11 +1867,41 @@ function resetEMT() {
 }
 
 // ── 通知記錄 ──
-function renderNotifyLog() {
+async function renderNotifyLog() {
   const wrap = document.getElementById('notifyLogList');
   if (!wrap) return;
-  const log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
-  // 通知頁有記錄時，讓任務頁導覽徽章亮起
+
+  // 先讀 localStorage
+  let log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
+
+  // 再從 Sheets 補充（讀最新案件的通知）
+  try {
+    const res = await api('getCases');
+    if (res.success && res.cases) {
+      res.cases.forEach(c => {
+        if (c.lastNotifyMsg && c.lastNotifyTime) {
+          const alreadyHave = log.some(l => l.caseId === c.CaseID && l.time === c.lastNotifyTime);
+          if (!alreadyHave) {
+            log.unshift({
+              id: new Date(c.lastNotifyTime).getTime(),
+              caseId: c.CaseID,
+              verdict: c.lastNotifyType || 'emt_alert',
+              msg: c.lastNotifyMsg,
+              time: c.lastNotifyTime,
+              type: c.lastNotifyType || 'emt_alert'
+            });
+          }
+        }
+      });
+      // 合併後去重、排序、存回
+      log = log.filter((v,i,a) => a.findIndex(t => t.id === v.id) === i);
+      log.sort((a,b) => b.id - a.id);
+      if (log.length > 50) log = log.slice(0,50);
+      localStorage.setItem('ecpr_notify_log', JSON.stringify(log));
+    }
+  } catch(e) {}
+
+  // 通知頁有記錄時，讓通知導覽徽章亮起
   const notifyNavBtn = document.querySelector('[data-page="pageNotify"]');
   if (notifyNavBtn && log.length) notifyNavBtn.classList.add('has-task');
   if (!log.length) { wrap.innerHTML = '<div class="empty"><div class="ei">🔔</div><p>尚無通知記錄</p></div>'; return; }
@@ -2853,25 +2894,23 @@ async function loadCases() {
   const sorted = [...active, ...closed].reverse();
 
   wrap.innerHTML = sorted.map(c => {
-    const st = statusMap[st_val] || { lbl:st_val||'通報中', cls:'b-yellow' };
-    const dt = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
-    const st_val = caseStatus(c);
-    const isAlert   = ['pending','active',''].includes(st_val);
-    const isActivated = st_val === 'activated';
-    const isDone    = ['icuTransfer','closed','cancelled'].includes(st_val);
-    const colorCls  = isActivated ? 'cc-active' : isAlert ? 'cc-alert' : isDone ? 'cc-done' : '';
+    const sv = caseStatus(c);
+    const isAlert     = ['pending','active',''].includes(sv);
+    const isActivated = sv === 'activated';
+    const isDone      = ['icuTransfer','closed'].includes(sv);
+    const isCancelled = sv === 'cancelled';
+    const colorCls    = isActivated ? 'cc-active' : isAlert ? 'cc-alert' : (isDone||isCancelled) ? 'cc-done' : '';
+    const statusLabel = isActivated ? '🔴 正式啟動' : isAlert ? '🟠 預警通報' : isDone ? '🟢 完成' : isCancelled ? '⚫ 不啟動' : '—';
+    const dt  = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const ecprTime = c.ecprTime ? '⚡ ' + new Date(c.ecprTime).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
     const encoded = encodeURIComponent(JSON.stringify(c));
-    const verdictMap = { yes:'🟢 建議啟動', borderline:'🟡 待評估', no:'🔴 不建議' };
-    const verdict = c.ecprVerdict ? `${verdictMap[c.ecprVerdict]||c.ecprVerdict}` : '';
-    const statusDot = isActivated ? '🔴' : isAlert ? '🟠' : isDone ? '🟢' : '';
     return `<div class="cc ${colorCls}" onclick="viewCase('${encoded}')">
       <div class="cc-row">
-        <span class="cc-id" style="font-size:.85rem">${c.CaseID||'?'}</span>
-        <span class="cc-name">${statusDot} ${isActivated?'ECPR 啟動中':isAlert?'預警通報中':isDone?'已完成':'—'}</span>
-        <span class="badge ${st.cls}"><span class="dot"></span>${st.lbl}</span>
+        <span class="cc-id">${c.CaseID||'?'}</span>
+        <span class="cc-name">${statusLabel}</span>
         <span class="cc-time">${dt}</span>
       </div>
-      <div class="cc-sub">${verdict} · EMT: ${c.emtUser||'—'} ${c.shock?'· '+(c.shock==='yes'?'⚡ 可電擊':'不可電擊'):''}</div>
+      ${ecprTime ? `<div class="cc-sub" style="color:#FF8080;margin-top:4px">${ecprTime}</div>` : ''}
     </div>`;
   }).join('');
 }
