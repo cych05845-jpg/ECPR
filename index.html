@@ -2059,7 +2059,9 @@ function renderMissionDecState(c) {
   ['mdPending','mdIActivated','mdICancelled','mdOtherActivated','mdOtherCancelled']
     .forEach(id => document.getElementById(id).classList.add('hidden'));
 
-  if (c.ecprActivated) {
+  const isActivated = c.ecprActivated === true || c.ecprActivated === 'true' || c.ecprActivated === 1;
+  const isCancelledCase = c.ecprCancelled === true || c.ecprCancelled === 'true';
+  if (isActivated) {
     if (iAmDecider) {
       document.getElementById('mdIActivated').classList.remove('hidden');
       document.getElementById('mdIActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
@@ -2072,7 +2074,7 @@ function renderMissionDecState(c) {
       document.getElementById('mdAckedAct').classList.toggle('hidden', !ack);
       if (ack) document.getElementById('mdAckedActTime').textContent = ack;
     }
-  } else if (c.ecprCancelled) {
+  } else if (isCancelledCase) {
     if (iAmDecider) {
       document.getElementById('mdICancelled').classList.remove('hidden');
       document.getElementById('mdICancelTime').textContent = c.ecprCancelTime ? new Date(c.ecprCancelTime).toLocaleTimeString('zh-TW') : '';
@@ -2094,7 +2096,9 @@ function renderMissionDecState(c) {
 function renderMissionRecState(c) {
   ['mrecWaiting','mrecActivated','mrecCancelled'].forEach(id =>
     document.getElementById(id).classList.add('hidden'));
-  if (c.ecprActivated) {
+  const isAct = c.ecprActivated === true || c.ecprActivated === 'true';
+  const isCan = c.ecprCancelled === true || c.ecprCancelled === 'true';
+  if (isAct) {
     document.getElementById('mrecActivated').classList.remove('hidden');
     document.getElementById('mrecActBy').textContent = c.ecprBy||'—';
     document.getElementById('mrecActTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
@@ -2102,7 +2106,7 @@ function renderMissionRecState(c) {
     document.getElementById('mrecAckBtn').classList.toggle('hidden', !!ack);
     document.getElementById('mrecAckedMsg').classList.toggle('hidden', !ack);
     if (ack) document.getElementById('mrecAckedTime').textContent = ack;
-  } else if (c.ecprCancelled) {
+  } else if (isCan) {
     document.getElementById('mrecCancelled').classList.remove('hidden');
     document.getElementById('mrecCancelBy').textContent = c.ecprCancelBy||'—';
     const ack = localStorage.getItem(`ecpr_ack_cancel_${c.CaseID}_${CU.username}`);
@@ -2435,13 +2439,18 @@ async function specConfirmActivate() {
         b.style.cursor = 'not-allowed';
       });
 
-      // 更新兩個 case 物件
+      // 停止輪詢避免覆蓋剛更新的狀態
+      if (missionPollInterval) { clearInterval(missionPollInterval); missionPollInterval = null; }
+
+      // 更新所有 case 物件
       [missionCase, specCurrentCase, activeCase].forEach(c => {
         if (c && c.CaseID === theCase.CaseID) {
           c.ecprActivated = true;
           c.ecprTime = now;
           c.ecprBy = CU.displayname;
           c.ecprByRole = ROLES[CU.role]?.label||CU.role;
+          c.status = 'activated';
+          c[''] = 'activated';  // 相容舊欄位
         }
       });
 
@@ -2467,12 +2476,15 @@ async function specConfirmActivate() {
 請至任務頁確認收到。`;
       saveNotify(msg, cid, 'activated');
 
-      // 更新任務頁和專師頁
+      // 立即更新 UI
       if (missionCase) renderMission(missionCase);
       if (specCurrentCase) renderDecisionState(specCurrentCase);
 
-      // 顯示啟動通知 modal 並跳轉任務頁
+      // 顯示正式啟動通知並跳任務頁
       showActivateModal(msg, cid);
+
+      // 3秒後重啟輪詢（讓 Sheets 有時間寫入）
+      setTimeout(() => startMissionPoll(), 3000);
     }, 'red', '⚡ 確認啟動'
   );
 }
