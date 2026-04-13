@@ -1787,7 +1787,8 @@ function saveNotify(msg, caseId, verdict) {
     id: Date.now(),
     caseId, verdict, msg,
     time: new Date().toISOString(),
-    type: verdict === 'activated' ? 'activate' : 'emt_alert'
+    type: verdict === 'activated' ? 'activate' : 'emt_alert',
+    by: CU?.displayname || ''
   };
   notifyLog.unshift(entry);
   if (notifyLog.length > 50) notifyLog = notifyLog.slice(0,50);
@@ -1978,6 +1979,15 @@ async function loadMission() {
   document.getElementById('missionNoCase').classList.add('hidden');
   document.getElementById('missionCase').classList.remove('hidden');
   missionCase = active;
+  // 從通知記錄補充啟動資訊（當 Sheets 沒有 ecprBy 欄位時）
+  if (caseStatus(active) === 'activated' && !active.ecprBy) {
+    const log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
+    const actNotify = log.find(n => n.caseId === active.CaseID && n.verdict === 'activated');
+    if (actNotify) {
+      active.ecprBy = actNotify.by || '已確認';
+      active.ecprTime = actNotify.time;
+    }
+  }
   renderMission(active);
   startMissionPoll();
 }
@@ -2014,15 +2024,19 @@ function renderMission(c) {
   // 狀態條
   const bar = document.getElementById('missionStatusBar');
   bar.className = '';
-  if (c.ecprActivated) {
-    bar.className = 'msbar-active'; 
+  const sv = caseStatus(c);
+  const isAct2 = sv === 'activated' || c.ecprActivated === true || c.ecprActivated === 'true';
+  const isCan2 = sv === 'cancelled' || c.ecprCancelled === true || c.ecprCancelled === 'true';
+
+  if (isAct2) {
+    bar.className = 'msbar-active';
     document.getElementById('missionStatusIcon').textContent = '⚡';
     document.getElementById('missionStatusTitle').textContent = 'ECPR 已正式啟動';
     document.getElementById('missionStatusSub').textContent = '確認者：' + (c.ecprBy||'—');
     document.getElementById('missionActivatorInfo').classList.remove('hidden');
-    document.getElementById('missionActivatorName').textContent = c.ecprBy||'—';
+    document.getElementById('missionActivatorName').textContent = c.ecprBy||'已啟動';
     document.getElementById('missionActivatorTime').textContent = c.ecprTime ? new Date(c.ecprTime).toLocaleTimeString('zh-TW') : '';
-  } else if (c.ecprCancelled) {
+  } else if (isCan2) {
     bar.className = 'msbar-cancel';
     document.getElementById('missionStatusIcon').textContent = '✋';
     document.getElementById('missionStatusTitle').textContent = '已評估不啟動 ECPR';
@@ -2059,8 +2073,9 @@ function renderMissionDecState(c) {
   ['mdPending','mdIActivated','mdICancelled','mdOtherActivated','mdOtherCancelled']
     .forEach(id => document.getElementById(id).classList.add('hidden'));
 
-  const isActivated = c.ecprActivated === true || c.ecprActivated === 'true' || c.ecprActivated === 1;
-  const isCancelledCase = c.ecprCancelled === true || c.ecprCancelled === 'true';
+  const svD = caseStatus(c);
+  const isActivated = svD === 'activated' || c.ecprActivated === true || c.ecprActivated === 'true';
+  const isCancelledCase = svD === 'cancelled' || c.ecprCancelled === true || c.ecprCancelled === 'true';
   if (isActivated) {
     if (iAmDecider) {
       document.getElementById('mdIActivated').classList.remove('hidden');
@@ -2096,8 +2111,9 @@ function renderMissionDecState(c) {
 function renderMissionRecState(c) {
   ['mrecWaiting','mrecActivated','mrecCancelled'].forEach(id =>
     document.getElementById(id).classList.add('hidden'));
-  const isAct = c.ecprActivated === true || c.ecprActivated === 'true';
-  const isCan = c.ecprCancelled === true || c.ecprCancelled === 'true';
+  const svR = caseStatus(c);
+  const isAct = svR === 'activated' || c.ecprActivated === true || c.ecprActivated === 'true';
+  const isCan = svR === 'cancelled' || c.ecprCancelled === true || c.ecprCancelled === 'true';
   if (isAct) {
     document.getElementById('mrecActivated').classList.remove('hidden');
     document.getElementById('mrecActBy').textContent = c.ecprBy||'—';
