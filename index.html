@@ -1906,17 +1906,29 @@ async function renderNotifyLog() {
   const notifyNavBtn = document.querySelector('[data-page="pageNotify"]');
   if (notifyNavBtn && log.length) notifyNavBtn.classList.add('has-task');
   if (!log.length) { wrap.innerHTML = '<div class="empty"><div class="ei">🔔</div><p>尚無通知記錄</p></div>'; return; }
-  const verdictMap = { yes:'建議啟動', borderline:'待評估', no:'不建議啟動' };
-  const verdictColor = { yes:'var(--green-light)', borderline:'#FFD060', no:'#FF8080' };
+  const verdictMap = { yes:'建議啟動', borderline:'待評估', no:'不建議啟動', activated:'正式啟動', record:'啟動紀錄', cancelled:'不啟動' };
+  const verdictColor = { yes:'var(--green-light)', borderline:'#FFD060', no:'#FF8080', activated:'#FF6B6B', record:'var(--green-light)', cancelled:'var(--text3)' };
   wrap.innerHTML = log.map(n => {
     const dt = new Date(n.time).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    return `<div class="notify-item">
+    const isActivate = n.verdict === 'activated';
+    const isRecord   = n.verdict === 'record';
+    const tagBg    = isActivate ? 'rgba(217,43,43,.2)' : isRecord ? 'rgba(26,158,92,.2)' : 'rgba(232,114,12,.2)';
+    const tagColor = isActivate ? '#FF6B6B' : isRecord ? 'var(--green-light)' : 'var(--orange)';
+    const tagLabel = isActivate ? '⚡ 正式啟動' : isRecord ? '📋 啟動紀錄' : '🚑 EMT通報';
+    const bodyColor = isActivate ? '#FFAAAA' : isRecord ? 'var(--text2)' : '#FFD080';
+    const jumpBtn = isRecord
+      ? `<button class="notify-jump-btn njb-blue" onclick="openRecordForCase('${n.caseId}')">📋 查看完整紀錄（可複製）</button>`
+      : isActivate
+        ? `<button class="notify-jump-btn njb-red" onclick="showPage('pageMission',document.querySelector('[data-page=pageMission]'))">⚡ 前往任務頁確認啟動</button>`
+        : `<button class="notify-jump-btn njb-blue" onclick="showPage('pageMission',document.querySelector('[data-page=pageMission]'))">📋 前往任務頁查看</button>`;
+    return `<div class="notify-item" style="border-left:3px solid ${tagColor}">
       <div class="ni-head">
-        <span class="ni-tag" style="background:rgba(26,107,181,.15);color:#5BA8E8">EMT 通報</span>
+        <span class="ni-tag" style="background:${tagBg};color:${tagColor}">${tagLabel}</span>
         <span style="font-size:.78rem;color:${verdictColor[n.verdict]||'var(--text2)'}">${verdictMap[n.verdict]||''}</span>
         <span class="ni-time">${dt}</span>
       </div>
-      <div class="ni-body">${n.msg}</div>
+      <div class="ni-body" style="color:${bodyColor}">${n.msg}</div>
+      ${jumpBtn}
     </div>`;
   }).join('');
 }
@@ -1942,54 +1954,87 @@ let missionSDMOpen = false;
 
 async function loadMission() {
   const res = await api('getCases');
-
-  // 除錯：顯示原始資料
-  console.log('[loadMission] getCases res:', res);
-
   if (!res.success || !res.cases) {
-    console.log('[loadMission] 無資料或失敗', res);
     document.getElementById('missionNoCase').classList.remove('hidden');
     document.getElementById('missionCase').classList.add('hidden');
     return;
   }
 
-  console.log('[loadMission] 案件數:', res.cases.length);
-  res.cases.forEach((c, i) => {
-    console.log(`[loadMission] 案件[${i}]:`, JSON.stringify(c));
+  const DONE = ['closed','icuTransfer'];
+  const now = Date.now();
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+
+  // 篩出「進行中」且「未超過1天」的案件
+  const activeCases = res.cases.filter(c => {
+    const sv = caseStatus(c);
+    if (DONE.includes(sv)) return false;
+    if (!c.CaseID) return false;
+    if (c.reportTime && (now - new Date(c.reportTime).getTime()) > ONE_DAY) return false;
+    return true;
   });
 
-  // 放寬條件：任何有 CaseID 的案件都算
-  // 優先找非結案的，其次找最新一筆
-  const DONE = ['closed', 'icuTransfer'];
-  // caseStatus() 處理 status 欄位名稱為空字串的情況
-  let active = res.cases.find(c => caseStatus(c) === 'activated')
-    || res.cases.find(c => caseStatus(c) === 'pending')
-    || res.cases.find(c => caseStatus(c) === 'active')
-    || res.cases.find(c => c.CaseID && !DONE.includes(caseStatus(c)))
-    || (res.cases.length > 0 ? res.cases[res.cases.length - 1] : null);
-
-  console.log('[loadMission] 選中案件:', active);
-
-  if (!active || !active.CaseID) {
+  if (activeCases.length === 0) {
     document.getElementById('missionNoCase').classList.remove('hidden');
     document.getElementById('missionCase').classList.add('hidden');
+    const extra = document.getElementById('missionExtraCases');
+    if (extra) extra.innerHTML = '';
     return;
   }
+
+  // 主案件：優先顯示啟動中，其次最新
+  const main = activeCases.find(c => caseStatus(c) === 'activated')
+    || activeCases[activeCases.length - 1];
 
   document.getElementById('missionNoCase').classList.add('hidden');
   document.getElementById('missionCase').classList.remove('hidden');
-  missionCase = active;
-  // 從通知記錄補充啟動資訊（當 Sheets 沒有 ecprBy 欄位時）
-  if (caseStatus(active) === 'activated' && !active.ecprBy) {
+  missionCase = main;
+
+  // 補充啟動資訊
+  if (caseStatus(main) === 'activated' && !main.ecprBy) {
     const log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
-    const actNotify = log.find(n => n.caseId === active.CaseID && n.verdict === 'activated');
-    if (actNotify) {
-      active.ecprBy = actNotify.by || '已確認';
-      active.ecprTime = actNotify.time;
-    }
+    const actNotify = log.find(n => n.caseId === main.CaseID && n.verdict === 'activated');
+    if (actNotify) { main.ecprBy = actNotify.by || '已啟動'; main.ecprTime = actNotify.time; }
   }
-  renderMission(active);
+
+  renderMission(main);
+
+  // 多案件提醒卡（其他未完成案件）
+  let extraEl = document.getElementById('missionExtraCases');
+  if (!extraEl) {
+    extraEl = document.createElement('div');
+    extraEl.id = 'missionExtraCases';
+    document.getElementById('missionCase').appendChild(extraEl);
+  }
+  const others = activeCases.filter(c => c.CaseID !== main.CaseID);
+  if (others.length > 0) {
+    extraEl.innerHTML = others.map(c => {
+      const sv = caseStatus(c);
+      const col = sv === 'activated' ? 'var(--red-light)' : '#FFB060';
+      const lbl = sv === 'activated' ? '🔴 正式啟動' : '🟠 待決策';
+      const dt = c.reportTime ? new Date(c.reportTime).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div style="background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:10px;cursor:pointer" onclick="switchMissionCase('${c.CaseID}')">
+        <div style="font-size:.72rem;color:var(--text3);margin-bottom:4px">⚠️ 另有未完成案件</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:${col}">${c.CaseID}</span>
+          <span style="font-size:.82rem;color:${col}">${lbl}</span>
+          <span style="font-size:.75rem;color:var(--text3);margin-left:auto">${dt}</span>
+        </div>
+        <div style="font-size:.72rem;color:var(--blue-light);margin-top:4px">點此切換查看 →</div>
+      </div>`;
+    }).join('');
+  } else {
+    extraEl.innerHTML = '';
+  }
+
   startMissionPoll();
+}
+
+function switchMissionCase(caseId) {
+  api('getCases').then(res => {
+    if (!res.success) return;
+    const c = res.cases.find(x => x.CaseID === caseId);
+    if (c) { missionCase = c; renderMission(c); }
+  });
 }
 
 function startMissionPoll() {
@@ -2161,9 +2206,15 @@ function toggleMissionTask(el) {
     const now = new Date().toISOString();
     ms[task] = now;
     el.querySelector('.mt-status').textContent = '✅ 完成';
-    el.querySelector('.mt-time').textContent = new Date(now).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
-    api('updateCase', { caseId: missionCase.CaseID, updates: { ['ms_'+task]: now } });
+    const timeStr = new Date(now).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+    el.querySelector('.mt-time').textContent = `${timeStr}　${CU.displayname}`;
+    api('updateCase', { caseId: missionCase.CaseID, updates: { ['ms_'+task]: now, ['ms_'+task+'_by']: CU.displayname } });
     toast(`已記錄：${el.querySelector('.mt-title').textContent}`, 'ok');
+
+    // 勾選 ICU → 產生完整 ECPR 紀錄
+    if (task === 'icu') {
+      setTimeout(() => generateECPRRecord(missionCase, ms), 500);
+    }
   } else {
     delete ms[task];
     el.querySelector('.mt-status').textContent = '待完成';
@@ -2173,12 +2224,98 @@ function toggleMissionTask(el) {
   updateNurseTaskProg();
 }
 
+function generateECPRRecord(c, ms) {
+  const fmt = t => t ? new Date(t).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '—';
+  const lines = [];
+  lines.push('【ECPR 啟動紀錄】');
+  lines.push(`案件編號：${c.CaseID || '—'}`);
+  lines.push('');
+
+  if (c.reportTime)  lines.push(`${fmt(c.reportTime)}　預警啟動（EMT 通報）`);
+  if (c.ecprTime)    lines.push(`${fmt(c.ecprTime)}　正式啟動：由 ${c.ecprBy || '醫師'} 確認啟動`);
+  else if (caseStatus(c) === 'activated') lines.push(`—　正式啟動（時間未記錄）`);
+  if (ms.team)       lines.push(`${fmt(ms.team)}　團隊就位`);
+  if (ms.cannula)    lines.push(`${fmt(ms.cannula)}　完成導管放置`);
+  if (ms.xray)       lines.push(`${fmt(ms.xray)}　已照完 X 光確認導管位置`);
+  if (ms.icu)        lines.push(`${fmt(ms.icu)}　轉入 ICU`);
+  lines.push('');
+  // 記錄者：從 ICU 那項的 mt-time 旁的勾選者，或當前登入者
+  const icuEl = document.querySelector('[data-task="icu"]');
+  const icuBy = icuEl?.querySelector('.mt-time')?.textContent || '';
+  const recorder = `${CU.displayname}（${ROLES[CU.role]?.label || CU.role}）${icuBy ? ' ' + icuBy : ''}`;
+  lines.push(`記錄者：${recorder}`);
+  lines.push(`產生時間：${new Date().toLocaleString('zh-TW')}`);
+
+  const record = lines.join('
+');
+
+  // 存到 Sheets
+  api('updateCase', { caseId: c.CaseID, updates: { ecprRecord: record } });
+
+  // 存到 localStorage 供通知頁顯示
+  saveNotify(record, c.CaseID, 'record');
+
+  // 顯示紀錄 modal（可複製）
+  showRecordModal(record, c.CaseID);
+}
+
+function showRecordModal(record, caseId) {
+  document.getElementById('mTitle').textContent = '📋 ECPR 啟動紀錄';
+  document.getElementById('mMsg').innerHTML =
+    `<div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:14px;font-size:.88rem;line-height:1.9;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;color:var(--text2);user-select:all">${record}</div>
+    <div style="font-size:.75rem;color:var(--text3);margin-top:8px">▲ 點選文字可全選複製，可直接貼到護理記錄</div>`;
+  const btn = document.getElementById('mOkBtn');
+  btn.textContent = '✅ 完成';
+  btn.className = 'btn-mok green';
+  btn.style.background = 'var(--green)';
+  modalCb = null;
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+function openRecordForCase(caseId) {
+  api('getCases').then(res => {
+    if (!res.success) return;
+    const c = res.cases.find(x => x.CaseID === caseId);
+    if (c && c.ecprRecord) {
+      showRecordModal(c.ecprRecord, caseId);
+    } else {
+      toast('此案件尚無完整記錄', 'err');
+    }
+  });
+}
+
 function updateNurseTaskProg() {
   const items = document.querySelectorAll('#nurseTaskList .mission-task');
   const done = document.querySelectorAll('#nurseTaskList .mission-task.done').length;
-  const pct = items.length ? Math.round(done/items.length*100) : 0;
+  const total = items.length;
+  const pct = total ? Math.round(done/total*100) : 0;
   document.getElementById('nurseTaskProg').style.width = pct+'%';
-  document.getElementById('nurseTaskProgLbl').textContent = `${done} / ${items.length}`;
+  document.getElementById('nurseTaskProgLbl').textContent = `${done} / ${total}`;
+
+  // 全部勾完 → 自動轉已完成
+  if (done === total && total > 0 && missionCase) {
+    const sv = caseStatus(missionCase);
+    if (sv === 'activated' || sv === 'active') {
+      api('updateCase', {
+        caseId: missionCase.CaseID,
+        updates: { status: 'closed', closedTime: new Date().toISOString(), closedBy: CU.username }
+      }).then(r => {
+        if (r.success) {
+          missionCase.status = 'closed';
+          missionCase[''] = 'closed';
+          toast('✅ 所有任務完成，案件已轉為完成', 'ok');
+          // 更新狀態條
+          const bar = document.getElementById('missionStatusBar');
+          if (bar) {
+            bar.className = 'msbar-cancel';
+            document.getElementById('missionStatusIcon').textContent = '✅';
+            document.getElementById('missionStatusTitle').textContent = '案件已完成';
+            document.getElementById('missionStatusSub').textContent = '護理師任務全部完成';
+          }
+        }
+      });
+    }
+  }
 }
 
 function updateTaskBadge(c) {
@@ -2870,14 +3007,28 @@ function updateTrackSummary(c) {
       <hr>
       <div class="sec-title">各職類到位狀態</div>
       <div class="g2">
-        ${['np','cvs','or','perf'].map(r => {
+        ${['np','dr','cvs','or','perf','nurse'].map(r => {
           const rr = ROLES[r];
-          const done = c[`${r}Confirmed`];
-          return `<div style="display:flex;align-items:center;gap:8px;padding:7px;background:var(--bg4);border-radius:6px;border:1px solid ${done?'rgba(26,158,92,.3)':'var(--border)'}">
-            <span>${rr.icon}</span>
-            <span style="font-size:.82rem;flex:1">${rr.label}</span>
-            <span style="font-size:.8rem;color:${done?'var(--green-light)':'var(--text3)'}">${done?'✅ 已到':'—'}</span>
-          </div>`;
+          if (!rr) return '';
+          // 任一人按確認即視為到位
+          const ackKey = Object.keys(c).find(k => k.startsWith('ack_') && c[k]);
+          // NP/DR：確認啟動者視為到位
+          let done = false;
+          if (r === 'np' || r === 'dr') {
+            done = c.ecprBy && (c.ecprByRole === rr.label || ROLES[c.ecprByRole?.toLowerCase()]?.label === rr.label);
+          } else if (r === 'nurse') {
+            // 護理師：ICU那項勾了就算
+            const msKey2 = 'ecpr_ms_' + c.CaseID;
+            const ms2 = JSON.parse(localStorage.getItem(msKey2)||'{}');
+            done = !!ms2.icu || !!c.ms_icu;
+          } else {
+            done = !!c[\`ack_\${r}\`] || Object.keys(c).some(k => k.startsWith('ack_') && c[k] && k.includes(r));
+          }
+          return \`<div style="display:flex;align-items:center;gap:8px;padding:7px;background:var(--bg4);border-radius:6px;border:1px solid \${done?'rgba(26,158,92,.3)':'var(--border)'}">
+            <span>\${rr.icon}</span>
+            <span style="font-size:.82rem;flex:1">\${rr.label}</span>
+            <span style="font-size:.8rem;color:\${done?'var(--green-light)':'var(--text3)'}">\${done?'✅ 已到位':'—'}</span>
+          </div>\`;
         }).join('')}
       </div>
     </div>
@@ -2930,6 +3081,9 @@ async function loadCases() {
     const dt  = c.reportTime ? new Date(c.reportTime).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
     const ecprTime = c.ecprTime ? '⚡ ' + new Date(c.ecprTime).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
     const encoded = encodeURIComponent(JSON.stringify(c));
+    const recordBtn = (isDone && c.ecprRecord)
+      ? `<button class="btn bgh btn-sm" style="margin-top:8px;font-size:.75rem" onclick="event.stopPropagation();openRecordForCase('${c.CaseID}')">📋 查看啟動紀錄</button>`
+      : '';
     return `<div class="cc ${colorCls}" onclick="viewCase('${encoded}')">
       <div class="cc-row">
         <span class="cc-id">${c.CaseID||'?'}</span>
@@ -2937,6 +3091,7 @@ async function loadCases() {
         <span class="cc-time">${dt}</span>
       </div>
       ${ecprTime ? `<div class="cc-sub" style="color:#FF8080;margin-top:4px">${ecprTime}</div>` : ''}
+      ${recordBtn}
     </div>`;
   }).join('');
 }
@@ -2949,13 +3104,23 @@ function viewCase(encoded) {
   const msKey = 'ecpr_ms_' + c.CaseID;
   let ms = JSON.parse(localStorage.getItem(msKey) || '{}');
 
+  // ECPR 啟動時間：優先從 case 讀，沒有則從通知記錄讀
+  let ecprTime = c.ecprTime || null;
+  if (!ecprTime && (caseStatus(c) === 'activated')) {
+    const log = JSON.parse(localStorage.getItem('ecpr_notify_log') || '[]');
+    const actLog = log.find(n => n.caseId === c.CaseID && n.verdict === 'activated');
+    if (actLog) ecprTime = actLog.time;
+  }
+  // ms.ecpr 也可能有記錄
+  if (!ecprTime && ms.ecpr) ecprTime = ms.ecpr;
+
   const milestones = [
     { key:'emt',     icon:'🚑', label:'EMT 通報',        auto: true,  time: c.reportTime },
-    { key:'ecpr',    icon:'⚡', label:'ECPR 正式啟動',   auto: true,  time: c.ecprTime || null },
-    { key:'team',    icon:'👥', label:'團隊就位',         auto: false, time: ms.team || null },
-    { key:'cannula', icon:'💉', label:'導管放置完成',     auto: false, time: ms.cannula || null },
-    { key:'xray',    icon:'🩻', label:'X光確認導管位置', auto: false, time: ms.xray || null },
-    { key:'icu',     icon:'🏥', label:'轉入 ICU',         auto: false, time: ms.icu || null },
+    { key:'ecpr',    icon:'⚡', label:'ECPR 正式啟動',   auto: true,  time: ecprTime },
+    { key:'team',    icon:'👥', label:'團隊就位',         auto: false, time: ms.team || c.ms_team || null },
+    { key:'cannula', icon:'💉', label:'導管放置完成',     auto: false, time: ms.cannula || c.ms_cannula || null },
+    { key:'xray',    icon:'🩻', label:'X光確認導管位置', auto: false, time: ms.xray || c.ms_xray || null },
+    { key:'icu',     icon:'🏥', label:'轉入 ICU',         auto: false, time: ms.icu || c.ms_icu || null },
   ];
 
   const isActive = ['pending','active','activated'].includes(c.status);
@@ -2992,8 +3157,10 @@ function viewCase(encoded) {
       </div>
       <div class="timeline">
         ${milestones.map((m, i) => {
-          const isDone = !!m.time;
-          const timeStr = m.time ? new Date(m.time).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : '';
+          // ECPR啟動節點特殊處理：status=activated 就視為完成
+          const isECPRNode = m.key === 'ecpr';
+          const isDone = !!m.time || (isECPRNode && caseStatus(c) === 'activated');
+          const timeStr = m.time ? new Date(m.time).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}) : (isECPRNode && isDone ? '已啟動' : '');
           const isCurrentActive = isActive && !isDone && (i===0 || !!milestones[i-1].time);
           return `<div class="tl-item">
             <div class="tl-left">
