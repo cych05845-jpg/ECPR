@@ -1418,7 +1418,7 @@ function toast(msg, type='') {
 //  MODAL
 // ════════════════════════════════════════
 function confirm2(title, msg, cb, cls='', lbl='確認') {
-  // 停止輪詢，避免 renderMission 清掉 modalCb
+  // 停止所有輪詢
   if (typeof missionPollInterval !== 'undefined' && missionPollInterval) {
     clearInterval(missionPollInterval); missionPollInterval = null;
   }
@@ -1430,16 +1430,24 @@ function confirm2(title, msg, cb, cls='', lbl='確認') {
   const btn = document.getElementById('mOkBtn');
   btn.textContent = lbl;
   btn.className = 'btn-mok ' + cls;
+  // 用 window 層級變數儲存，避免被 let 變數污染
+  window.__modalCallback = cb;
   modalCb = cb;
   document.getElementById('confirmModal').classList.add('active');
 }
 function closeModal() {
   document.getElementById('confirmModal').classList.remove('active');
   modalCb = null;
+  // 不在這裡清 window.__modalCallback，讓 doModal 自己清
   // 重啟輪詢
-  if (typeof startMissionPoll === 'function' && missionCase) setTimeout(startMissionPoll, 1000);
+  if (typeof startMissionPoll === 'function' && missionCase) setTimeout(startMissionPoll, 2000);
 }
-function doModal() { closeModal(); if (modalCb) modalCb(); }
+function doModal() {
+  const cb = window.__modalCallback || modalCb;
+  window.__modalCallback = null;
+  closeModal();
+  if (cb) cb();
+}
 
 // ════════════════════════════════════════
 //  LOGIN
