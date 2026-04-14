@@ -1418,6 +1418,13 @@ function toast(msg, type='') {
 //  MODAL
 // ════════════════════════════════════════
 function confirm2(title, msg, cb, cls='', lbl='確認') {
+  // 停止輪詢，避免 renderMission 清掉 modalCb
+  if (typeof missionPollInterval !== 'undefined' && missionPollInterval) {
+    clearInterval(missionPollInterval); missionPollInterval = null;
+  }
+  if (typeof specPollInterval !== 'undefined' && specPollInterval) {
+    clearInterval(specPollInterval); specPollInterval = null;
+  }
   document.getElementById('mTitle').textContent = title;
   document.getElementById('mMsg').textContent = msg;
   const btn = document.getElementById('mOkBtn');
@@ -1426,7 +1433,12 @@ function confirm2(title, msg, cb, cls='', lbl='確認') {
   modalCb = cb;
   document.getElementById('confirmModal').classList.add('active');
 }
-function closeModal() { document.getElementById('confirmModal').classList.remove('active'); modalCb = null; }
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('active');
+  modalCb = null;
+  // 重啟輪詢
+  if (typeof startMissionPoll === 'function' && missionCase) setTimeout(startMissionPoll, 1000);
+}
 function doModal() { closeModal(); if (modalCb) modalCb(); }
 
 // ════════════════════════════════════════
