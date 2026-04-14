@@ -1670,6 +1670,13 @@ function doLogout() {
 async function loadActiveCase() {
   const res = await api('getCases');
   if (!res.success || !res.cases) return;
+  const DONE = ['closed','icuTransfer','cancelled'];
+  // 如果 activeCase 已完成，清除摘要
+  if (activeCase && DONE.includes(caseStatus(activeCase))) {
+    const wrap = document.getElementById('trackActiveSummary');
+    if (wrap) wrap.innerHTML = '';
+    activeCase = null;
+  }
   const c = res.cases.find(c => ['pending','active','activated'].includes(caseStatus(c)))
     || res.cases.find(c => caseStatus(c) === '' && c.CaseID);
   if (c) {
@@ -2136,7 +2143,8 @@ function renderMission(c) {
 
 // ── 決策角色狀態 ─────────────────────────
 function renderMissionDecState(c) {
-  const iAmDecider = (c.ecprBy === CU.displayname) || (c.ecprCancelBy === CU.displayname);
+  // 用 username 比對更精確，避免同名顯示名稱誤判
+  const iAmDecider = (c.ecprByUser === CU.username) || (c.ecprBy === CU.displayname && DECISION_ROLES.includes(CU.role));
   ['mdPending','mdIActivated','mdICancelled','mdOtherActivated','mdOtherCancelled']
     .forEach(id => document.getElementById(id).classList.add('hidden'));
 
@@ -2347,6 +2355,10 @@ function updateNurseTaskProg() {
         if (r.success) {
           missionCase.status = 'closed';
           missionCase[''] = 'closed';
+          if (activeCase && activeCase.CaseID === missionCase.CaseID) {
+            activeCase.status = 'closed';
+            activeCase[''] = 'closed';
+          }
           toast('✅ 所有任務完成，案件已轉為完成', 'ok');
           // 更新狀態條
           const bar = document.getElementById('missionStatusBar');
@@ -2480,10 +2492,11 @@ async function specConfirmActivate() {
       const res = await api('updateCase', {
         caseId: theCase.CaseID,
         updates: {
-          ecprActivated: true, ecprTime: now,
-          ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role,
+          ecprActivated: 'true', ecprTime: now,
+          ecprBy: CU.displayname, ecprByUser: CU.username,
+          ecprByRole: ROLES[CU.role]?.label||CU.role,
           status: 'activated',
-          '': 'activated'   // Sheets 的 status 欄位標題是空字串
+          '': 'activated'
         }
       });
       if (!res.success) {
@@ -2495,7 +2508,7 @@ async function specConfirmActivate() {
       }
       if (missionPollInterval) { clearInterval(missionPollInterval); missionPollInterval = null; }
       // 直接更新全域變數（用 theCase 為主）
-      const _upd = { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByRole: ROLES[CU.role]?.label||CU.role, status: 'activated', '': 'activated' };
+      const _upd = { ecprActivated: true, ecprTime: now, ecprBy: CU.displayname, ecprByUser: CU.username, ecprByRole: ROLES[CU.role]?.label||CU.role, status: 'activated', '': 'activated' };
       Object.assign(theCase, _upd);
       if (missionCase) Object.assign(missionCase, _upd);
       if (specCurrentCase) Object.assign(specCurrentCase, _upd);
@@ -2589,7 +2602,8 @@ function showActivateModal(msg, caseId) {
 }
 
 function renderDecisionState(c) {
-  const iAmDecider = (c.ecprBy === CU.displayname) || (c.ecprCancelBy === CU.displayname);
+  // 用 username 比對更精確，避免同名顯示名稱誤判
+  const iAmDecider = (c.ecprByUser === CU.username) || (c.ecprBy === CU.displayname && DECISION_ROLES.includes(CU.role));
   ['decisionPending','decisionIActivated','decisionICancelled','decisionOtherActivated','decisionOtherCancelled']
     .forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); });
   const svD = caseStatus(c);
@@ -2945,7 +2959,7 @@ function buildTrackSummary() {
 
 function updateTrackSummary(c) {
   const wrap = document.getElementById('trackActiveSummary');
-  if (!c || ['closed','icuTransfer'].includes(c.status)) { wrap.innerHTML = ''; return; }
+  if (!c || ['closed','icuTransfer','cancelled'].includes(caseStatus(c) || c.status)) { wrap.innerHTML = ''; return; }
   wrap.innerHTML = `
     <div class="card" style="border-color:rgba(217,43,43,.3);background:rgba(217,43,43,.05)">
       <div class="card-hd">
