@@ -362,11 +362,13 @@
   .notify-item.activate-type { border-left:4px solid var(--red); }
 
   /* SPECIALIST ACTIVATION */
-  .act-btn-confirm { background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;font-size:1.1rem;font-weight:900;padding:18px;border-radius:var(--radius);border:none;width:100%;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(217,43,43,.4);transition:all .2s;letter-spacing:.05em; }
-  .act-btn-confirm:hover { filter:brightness(1.1);box-shadow:0 6px 28px rgba(217,43,43,.6);transform:translateY(-1px); }
-  .act-btn-confirm:disabled { opacity:.4;cursor:not-allowed;transform:none; }
-  .act-btn-cancel { background:linear-gradient(135deg,var(--green),#0d7d48);color:#fff;font-size:1.1rem;font-weight:900;padding:18px;border-radius:var(--radius);border:none;width:100%;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(26,158,92,.4);transition:all .2s;letter-spacing:.05em; }
-  .act-btn-cancel:hover { filter:brightness(1.1);transform:translateY(-1px); }
+  .act-btn-confirm { background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;font-size:1.1rem;font-weight:900;padding:20px;border-radius:var(--radius);border:none;width:100%;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(217,43,43,.4);transition:all .2s;letter-spacing:.05em;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:block; }
+  .act-btn-confirm:hover { filter:brightness(1.1);box-shadow:0 6px 28px rgba(217,43,43,.6); }
+  .act-btn-confirm:active { filter:brightness(0.9); }
+  .act-btn-confirm:disabled { opacity:.4;cursor:not-allowed; }
+  .act-btn-cancel { background:linear-gradient(135deg,var(--green),#0d7d48);color:#fff;font-size:1.1rem;font-weight:900;padding:20px;border-radius:var(--radius);border:none;width:100%;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(26,158,92,.4);transition:all .2s;letter-spacing:.05em;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:block; }
+  .act-btn-cancel:hover { filter:brightness(1.1); }
+  .act-btn-cancel:active { filter:brightness(0.9); }
 
   /* SDM ZONE TABLE */
   .sdm-zone-row { display:grid;grid-template-columns:auto 1fr 1fr auto;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:6px;transition:all .3s; }
@@ -976,7 +978,7 @@
 
             <!-- 待決策 -->
             <div id="mdPending" class="hidden">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+              <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px">
                 <button class="act-btn-confirm" onclick="specConfirmActivate()">⚡ 確認啟動 ECPR</button>
                 <button class="act-btn-cancel" onclick="specCancelActivate()">✋ 取消啟動</button>
               </div>
@@ -2276,9 +2278,16 @@ function generateECPRRecord(c, ms) {
 
 function showRecordModal(record, caseId) {
   document.getElementById('mTitle').textContent = '📋 ECPR 啟動紀錄';
-  document.getElementById('mMsg').innerHTML =
-    `<div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:14px;font-size:.88rem;line-height:1.9;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;color:var(--text2);user-select:all">${record}</div>
-    <div style="font-size:.75rem;color:var(--text3);margin-top:8px">▲ 點選文字可全選複製，可直接貼到護理記錄</div>`;
+  const msgEl = document.getElementById('mMsg');
+  msgEl.innerHTML = '';
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:14px;font-size:.88rem;line-height:1.9;white-space:pre-wrap;font-family:inherit;color:var(--text2);user-select:all;margin:0;cursor:text';
+  pre.textContent = record;
+  msgEl.appendChild(pre);
+  const hint = document.createElement('div');
+  hint.style.cssText = 'font-size:.75rem;color:var(--text3);margin-top:8px';
+  hint.textContent = '▲ 點選文字可全選複製，可直接貼到護理記錄';
+  msgEl.appendChild(hint);
   const btn = document.getElementById('mOkBtn');
   btn.textContent = '✅ 完成';
   btn.className = 'btn-mok green';
@@ -2545,9 +2554,12 @@ function specReassess() {
 
 function showActivateModal(msg, caseId) {
   document.getElementById('mTitle').textContent = '⚡ ECPR 正式啟動通知';
-  document.getElementById('mMsg').innerHTML =
-    '<div style="background:rgba(217,43,43,.1);border:1px solid rgba(217,43,43,.3);border-radius:8px;padding:12px;font-family:JetBrains Mono,monospace;font-size:.82rem;line-height:1.8;color:#FFAAAA;white-space:pre-wrap">' +
-    msg + '</div>';
+  const msgEl = document.getElementById('mMsg');
+  msgEl.innerHTML = '';
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'background:rgba(217,43,43,.1);border:1px solid rgba(217,43,43,.3);border-radius:8px;padding:12px;font-size:.82rem;line-height:1.8;color:#FFAAAA;white-space:pre-wrap;font-family:inherit;margin:0';
+  pre.textContent = msg;
+  msgEl.appendChild(pre);
   const btn = document.getElementById('mOkBtn');
   btn.textContent = '📋 前往任務頁確認';
   btn.className = 'btn-mok';
